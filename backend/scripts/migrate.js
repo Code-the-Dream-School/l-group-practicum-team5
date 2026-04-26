@@ -13,12 +13,10 @@ if (!allowedDirections.has(direction)) {
   process.exit(1);
 }
 
-const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URI;
+const databaseUrl = process.env.DATABASE_URL;
 
 if (!databaseUrl) {
-  console.error(
-    "Missing database URL. Set POSTGRES_URI or DATABASE_URL in your environment.",
-  );
+  console.error("Missing DATABASE_URL in your environment.");
   process.exit(1);
 }
 
@@ -27,7 +25,7 @@ runner({
   databaseUrl,
   dir: path.join(__dirname, "..", "migrations"),
   direction,
-  migrationsTable: "pgmigrations", // Internal table to track wwhich migrations have already been ran
+  migrationsTable: "pgmigrations", // Tracks which migrations have already run
   count: direction === "down" ? 1 : undefined, // Roll back 1 migration only
   log: console.log,
 })
