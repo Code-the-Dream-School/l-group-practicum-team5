@@ -6,6 +6,7 @@ const rateLimit = require('express-rate-limit');
 
 const helloRoutes = require('./routes/hello.routes');
 const authRoutes = require('./routes/auth.routes');
+const eventRoutes = require('./routes/event.routes');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(limiter);
 // Routes
 app.use('/api/hello', helloRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/events', eventRoutes);
 
 // Root route
 app.get('/', (req, res) => {
