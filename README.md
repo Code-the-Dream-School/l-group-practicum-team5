@@ -144,6 +144,7 @@ npm run migrate:create -- migration_name
 
 ## Migration Notes
 
+**Node.js requirement:** The migration tooling uses `node-pg-migrate`, which requires Node.js `>= 20.11.0`. Use Node.js 20.11.0 or later when running migration commands.
 `npm run migrate:up` applies migrations and creates the database schema.
 
 `npm run migrate:down` rolls back the latest migration. Since this project currently has one migration, running it will remove the schema created by that migration.
