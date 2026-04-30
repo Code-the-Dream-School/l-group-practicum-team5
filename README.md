@@ -148,7 +148,7 @@ npm run migrate:create -- migration_name
 
 `npm run migrate:down` rolls back the latest migration. Since this project currently has one migration, running it will remove the schema created by that migration.
 
-Since we are sharing one database, only one person would need to run mnigrations.
+Since we are sharing one database, only one person would need to run migrations.
 
 ## 🔐 API Overview
 
