@@ -159,5 +159,6 @@ exports.down = (pgm) => {
     DROP TABLE IF EXISTS public.users CASCADE;
 
     DROP FUNCTION IF EXISTS public.set_updated_at() CASCADE;
+    DROP EXTENSION IF EXISTS citext;
   `);
 };
