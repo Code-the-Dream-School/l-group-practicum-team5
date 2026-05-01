@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const util = require('util');
 const jwt = require('jsonwebtoken');
+const pool = require('../config/db.postgres');
 
 const scrypt = util.promisify(crypto.scrypt);
 
@@ -24,87 +25,101 @@ function generateToken(payload) {
 }
 
 const registerUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        message: 'Email and password are required'
-      });
-    }
-
-    const hashedPassword = await hashPassword(password);
-
-    // TODO: save user to database (pending RD-3 Jira ticket)
-    // Example future DB save:
-    // const newUser = await User.create({ email, password: hashedPassword });
-
-    res.status(201).json({
-      message: 'User registered successfully'
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: 'Something went wrong'
-    });
-  }
-};
-
-const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        message: 'Email and password are required'
-      });
-    }
-
-    // TODO: verify user credentials against database (pending RD-3 Jira ticket)
-    // Example future flow:
-    // 1. find user by email
-    // 2. compare entered password with stored hashed password
-    // 3. generate JWT if credentials are valid
-
-    /*
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(401).json({
-        message: 'Invalid credentials'
-      });
-    }
-
-    const isMatch = await comparePassword(password, user.password);
-
-    if (!isMatch) {
-      return res.status(401).json({
-        message: 'Invalid credentials'
-      });
-    }
-      
-
-    const token = generateToken({
-      id: 'test-user-id', //user._id,
-      email //: user.email
-    });
-
-    return res.status(200).json({
-      message: 'Login successful',
-      token
-    });
-    */
-
-    res.status(200).json({
-      message: 'Login endpoint ready (JWT pending DB credential verification)'
-    });
-} catch (error) {
-    console.error('Login error:', error);
+    try {
+      const { name, email, password } = req.body;
   
-    res.status(500).json({
-      message: 'Something went wrong'
-    });
-  }
-};
+      if (!name || !email || !password) {
+        return res.status(400).json({
+          message: 'Name, email, and password are required'
+        });
+      }
+  
+      const existingUser = await pool.query(
+        'SELECT id FROM users WHERE email = $1',
+        [email]
+      );
+  
+      if (existingUser.rows.length > 0) {
+        return res.status(409).json({
+          message: 'User already exists'
+        });
+      }
+  
+      const hashedPassword = await hashPassword(password);
+  
+      const newUser = await pool.query(
+        `INSERT INTO users (name, email, password_hash)
+         VALUES ($1, $2, $3)
+         RETURNING id, name, email`,
+        [name, email, hashedPassword]
+      );
+  
+      return res.status(201).json({
+        message: 'User registered successfully',
+        user: newUser.rows[0]
+      });
+    } catch (error) {
+      console.error('Register error:', error);
+  
+      return res.status(500).json({
+        message: 'Something went wrong'
+      });
+    }
+  };
+  
+  const loginUser = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+  
+      if (!email || !password) {
+        return res.status(400).json({
+          message: 'Email and password are required'
+        });
+      }
+  
+      const result = await pool.query(
+        'SELECT id, name, email, password_hash FROM users WHERE email = $1',
+        [email]
+      );
+  
+      if (result.rows.length === 0) {
+        return res.status(401).json({
+          message: 'Invalid credentials'
+        });
+      }
+  
+      const user = result.rows[0];
+  
+      const isMatch = await comparePassword(password, user.password_hash);
+  
+      if (!isMatch) {
+        return res.status(401).json({
+          message: 'Invalid credentials'
+        });
+      }
+  
+      const token = generateToken({
+        id: user.id,
+        email: user.email
+      });
+  
+      return res.status(200).json({
+        message: 'Login successful',
+        token,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email
+        }
+      });
+    } catch (error) {
+      console.error('Login error:', error);
+  
+      return res.status(500).json({
+        message: 'Something went wrong'
+      });
+    }
+  };
 
 module.exports = { registerUser, loginUser };
 
