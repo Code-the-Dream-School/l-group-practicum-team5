@@ -10,9 +10,12 @@ const {
 } = require('../controllers/event.controller');
 
 // CRUD Routes
+// Create Event
 router.post('/', createEvent);
+// Read Events
 router.get('/', getAllEvents);
 router.get('/:id', getEventById);
+// Update & Delete Events
 router.put('/:id', updateEvent);
 router.delete('/:id', deleteEvent);
 
