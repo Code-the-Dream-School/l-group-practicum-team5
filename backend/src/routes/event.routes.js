@@ -6,7 +6,7 @@ const {
   getAllEvents,
   getEventById,
   updateEvent,
-  deleteEvent
+  deleteEvent,
 } = require('../controllers/event.controller');
 
 // CRUD Routes

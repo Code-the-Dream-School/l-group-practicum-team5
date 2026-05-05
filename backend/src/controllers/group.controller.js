@@ -11,7 +11,7 @@ const clean = (value) => (value === undefined ? null : value);
 const sendSuccess = (res, data, status = 200) => {
   return res.status(status).json({
     success: true,
-    data
+    data,
   });
 };
 
@@ -19,7 +19,7 @@ const sendError = (res, message, error = null, status = 500) => {
   return res.status(status).json({
     success: false,
     message,
-    error: error ? error.message : undefined
+    error: error ? error.message : undefined,
   });
 };
 
@@ -48,7 +48,7 @@ const createGroup = async (req, res) => {
 
       const check = await db.query(
         'SELECT 1 FROM groups WHERE invite_code = $1',
-        [invite_code]
+        [invite_code],
       );
 
       exists = check.rows.length > 0;
@@ -65,7 +65,6 @@ const createGroup = async (req, res) => {
     const result = await db.query(query, values);
 
     return sendSuccess(res, result.rows[0], 201);
-
   } catch (error) {
     return sendError(res, 'Error creating group', error);
   }
@@ -85,7 +84,6 @@ const getAllGroups = async (req, res) => {
     const result = await db.query(query);
 
     return sendSuccess(res, result.rows);
-
   } catch (error) {
     return sendError(res, 'Error fetching groups', error);
   }
@@ -102,17 +100,13 @@ const getGroupById = async (req, res) => {
       return sendError(res, 'Invalid group ID', null, 400);
     }
 
-    const result = await db.query(
-      'SELECT * FROM groups WHERE id = $1',
-      [id]
-    );
+    const result = await db.query('SELECT * FROM groups WHERE id = $1', [id]);
 
     if (result.rows.length === 0) {
       return sendError(res, 'Group not found', null, 404);
     }
 
     return sendSuccess(res, result.rows[0]);
-
   } catch (error) {
     return sendError(res, 'Error fetching group', error);
   }
@@ -149,7 +143,6 @@ const updateGroup = async (req, res) => {
     }
 
     return sendSuccess(res, result.rows[0]);
-
   } catch (error) {
     return sendError(res, 'Error updating group', error);
   }
@@ -168,7 +161,7 @@ const deleteGroup = async (req, res) => {
 
     const result = await db.query(
       'DELETE FROM groups WHERE id = $1 RETURNING *',
-      [id]
+      [id],
     );
 
     if (result.rows.length === 0) {
@@ -177,9 +170,8 @@ const deleteGroup = async (req, res) => {
 
     return sendSuccess(res, {
       message: 'Group deleted successfully',
-      deleted: result.rows[0]
+      deleted: result.rows[0],
     });
-
   } catch (error) {
     return sendError(res, 'Error deleting group', error);
   }
@@ -190,5 +182,5 @@ module.exports = {
   getAllGroups,
   getGroupById,
   updateGroup,
-  deleteGroup
+  deleteGroup,
 };
