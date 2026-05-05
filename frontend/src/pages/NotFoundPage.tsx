@@ -4,7 +4,9 @@ function NotFoundPage() {
   return (
     <>
       <h1>Page not found!</h1>
-      <Link to={"/"}></Link>
+      <Link to={"/"}>
+        <button>Go back home</button>
+      </Link>
     </>
   );
 }
