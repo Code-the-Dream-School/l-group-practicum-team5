@@ -8,6 +8,7 @@ const helloRoutes = require('./routes/hello.routes');
 const authRoutes = require('./routes/auth.routes');
 const eventRoutes = require('./routes/event.routes');
 const groupRoutes = require('./routes/group.routes');
+const memberRoutes = require('./routes/member.routes');
 
 const app = express();
 
@@ -28,6 +29,9 @@ app.use('/api/hello', helloRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/groups', groupRoutes);
+app.use('/api/groups', memberRoutes);
+
+
 
 // Root route
 app.get('/', (req, res) => {
