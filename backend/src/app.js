@@ -27,6 +27,7 @@ app.use(limiter);
 app.use('/api/hello', helloRoutes);
 app.use('/api/auth', authRoutes);
 
+//Middleware
 app.use(errorHandlerMiddleware);
 
 // Root route
