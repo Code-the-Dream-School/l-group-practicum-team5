@@ -1,4 +1,5 @@
 const db = require('../config/db.postgres'); // Placeholder for future DB integration
+const { BadRequestError, NotFoundError} = require('../errors');
 
 /*   // In-memory store for now (replace with DB later)
 let events = [];
@@ -14,19 +15,16 @@ const parseId = (id) => {
 };
 
 // Create Event
-const createEvent = async (req, res) => {
+const createEvent = async (req, res, next) => {
   try {
     const { group_id, title, description, event_date, status, created_by } =
       req.body;
 
     // Basic validation
     if (!group_id || !title || !event_date || !status || !created_by) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'group_id, title and event_date, status and created_by are required',
-        });
+      throw new BadRequestError(
+        'group_id, title and event_date, status and created_by are required'
+      );
     }
 
     /*   const newEvent = {
@@ -72,14 +70,12 @@ const createEvent = async (req, res) => {
 
     return res.status(201).json(result.rows[0]);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: 'Error creating event', error: error.message });
+      next(error);
   }
 };
 
 // Get All Events
-const getAllEvents = async (req, res) => {
+const getAllEvents = async (req, res, next) => {
   try {
     //   res.json(events);
     const query = `
@@ -92,14 +88,12 @@ const getAllEvents = async (req, res) => {
 
     return res.json(result.rows);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: 'Error fetching events', error: error.message });
+    next(error);
   }
 };
 
 // Get Single Event
-const getEventById = async (req, res) => {
+const getEventById = async (req, res, next) => {
   try {
     /*   const event = events.find(e => e.id === parseInt(req.params.id));
 
@@ -117,19 +111,17 @@ const getEventById = async (req, res) => {
     const result = await db.query(query, [req.params.id]);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'Event not found' });
+      throw new NotFoundError('Event not found');
     }
 
     return res.json(result.rows[0]);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: 'Error fetching event', error: error.message });
+   next(error);
   }
 };
 
 // Update Event
-const updateEvent = async (req, res) => {
+const updateEvent = async (req, res, next) => {
   try {
     /*   const event = events.find(e => e.id === parseInt(req.params.id));
 
@@ -175,19 +167,20 @@ const updateEvent = async (req, res) => {
     const result = await db.query(query, values);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'Event not found' });
+      throw new NotFoundError('Event not found');
     }
 
     return res.json(result.rows[0]);
   } catch (error) {
-    res
+    next(error);
+   /*  res
       .status(500)
-      .json({ message: 'Error updating event', error: error.message });
+      .json({ message: 'Error updating event', error: error.message }); */
   }
 };
 
 // Delete Event
-const deleteEvent = async (req, res) => {
+const deleteEvent = async (req, res, next) => {
   try {
     /*   const index = events.findIndex(e => e.id === parseInt(req.params.id));
 
@@ -205,8 +198,8 @@ const deleteEvent = async (req, res) => {
 
     const result = await db.query(query, [req.params.id]);
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'Event not found' });
+    if (result.rows.length === 0) { 
+      throw new NotFoundError('Event not found');
     }
 
     return res.json({
@@ -214,9 +207,7 @@ const deleteEvent = async (req, res) => {
       event: result.rows[0],
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: 'Error deleting event', error: error.message });
+   next(error);   
   }
 };
 

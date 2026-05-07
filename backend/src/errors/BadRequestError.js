@@ -4,7 +4,7 @@ class BadRequestError extends CustomError {
   constructor(message) {
     super(message);
     this.statusCode = 400;
-    this.message = "Bad Request: " + message;
+    this.message = 'Bad Request: ' + message;
   }
 }
 

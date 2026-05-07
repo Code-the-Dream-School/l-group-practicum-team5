@@ -4,7 +4,7 @@ class InternalServerError extends CustomError {
   constructor(message) {
     super(message);
     this.statusCode = 500;
-    this.message = "Internal Server Error: " + message;
+    this.message = 'Internal Server Error: ' + message;
   }
 }
 

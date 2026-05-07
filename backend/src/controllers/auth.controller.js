@@ -2,8 +2,11 @@ const crypto = require('crypto');
 const util = require('util');
 const jwt = require('jsonwebtoken');
 const pool = require('../config/db.postgres');
+const {BadRequestError, UnauthorizedError, ConflictError} = require('../errors');
 
 const scrypt = util.promisify(crypto.scrypt);
+
+
 
 async function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString('hex');
@@ -26,14 +29,14 @@ function generateToken(payload) {
   });
 }
 
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({
-        message: 'Name, email, and password are required',
-      });
+      throw new BadRequestError(
+        'Name, email, and password are required'
+      );
     }
 
     const existingUser = await pool.query(
@@ -44,9 +47,7 @@ const registerUser = async (req, res) => {
     );
 
     if (existingUser.rows.length > 0) {
-      return res.status(409).json({
-        message: 'User already exists',
-      });
+      throw new ConflictError('User already exists');
     }
 
     const hashedPassword = await hashPassword(password);
@@ -64,21 +65,16 @@ const registerUser = async (req, res) => {
     });
   } catch (error) {
     console.error('Register error:', error);
-
-    return res.status(500).json({
-      message: 'Something went wrong',
-    });
+    next(error);
   }
 };
 
-const loginUser = async (req, res) => {
+const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({
-        message: 'Email and password are required',
-      });
+      throw new BadRequestError('Email and password are required');
     }
 
     const result = await pool.query(
@@ -87,9 +83,7 @@ const loginUser = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(401).json({
-        message: 'Invalid credentials',
-      });
+      throw new UnauthorizedError('Invalid credentials');
     }
 
     const user = result.rows[0];
@@ -97,9 +91,8 @@ const loginUser = async (req, res) => {
     const isMatch = await comparePassword(password, user.password_hash);
 
     if (!isMatch) {
-      return res.status(401).json({
-        message: 'Invalid credentials',
-      });
+
+      throw new UnauthorizedError('Invalid credentials');
     }
 
     const token = generateToken({
@@ -118,11 +111,9 @@ const loginUser = async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-
-    return res.status(500).json({
-      message: 'Something went wrong',
-    });
+    next(error);
   }
 };
+
 
 module.exports = { registerUser, loginUser };
