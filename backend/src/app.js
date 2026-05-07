@@ -6,6 +6,8 @@ const rateLimit = require('express-rate-limit');
 
 const helloRoutes = require('./routes/hello.routes');
 const authRoutes = require('./routes/auth.routes');
+const eventRoutes = require('./routes/event.routes');
+const groupRoutes = require('./routes/group.routes');
 
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
@@ -19,13 +21,15 @@ app.use(morgan('dev'));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100
+  max: 100,
 });
 app.use(limiter);
 
 // Routes
 app.use('/api/hello', helloRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/events', eventRoutes);
+app.use('/api/groups', groupRoutes);
 
 //Middleware
 app.use(errorHandlerMiddleware);
