@@ -6,7 +6,6 @@ import RegisterPage from './pages/RegisterPage.tsx';
 import DashboardPage from './pages/DashboardPage.tsx';
 import NotFoundPage from './pages/NotFoundPage.tsx';
 import './index.css';
-import App from './App.tsx';
 
 const router = createBrowserRouter([
   { path: '/', element: <RegisterPage /> },
