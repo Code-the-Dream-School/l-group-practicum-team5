@@ -1,8 +1,4 @@
-const db = require('../config/db.postgres'); // Placeholder for future DB integration
-
-/*   // In-memory store for now (replace with DB later)
-let events = [];
-let idCounter = 1;   */
+const db = require('../config/db.postgres');
 
 // Helper: safely convert undefined → null (important for SQL COALESCE)
 const clean = (value) => (value === undefined ? null : value);
@@ -28,21 +24,6 @@ const createEvent = async (req, res) => {
             'group_id, title and event_date, status and created_by are required',
         });
     }
-
-    /*   const newEvent = {
-    //   id: idCounter++,   //remove later when DB auto-generates
-    group_id,
-    title,
-    description: description || '',
-    event_date,
-    status,
-    created_by,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  };
-
-  events.push(newEvent);
-  res.status(201).json(newEvent);   */
 
     const query = `
       INSERT INTO events (
@@ -81,7 +62,6 @@ const createEvent = async (req, res) => {
 // Get All Events
 const getAllEvents = async (req, res) => {
   try {
-    //   res.json(events);
     const query = `
       SELECT *
       FROM events
@@ -101,13 +81,6 @@ const getAllEvents = async (req, res) => {
 // Get Single Event
 const getEventById = async (req, res) => {
   try {
-    /*   const event = events.find(e => e.id === parseInt(req.params.id));
-
-  if (!event) {
-    return res.status(404).json({ message: 'Event not found' });
-  }
-
-  res.json(event);   */
     const query = `
       SELECT *
       FROM events
@@ -131,23 +104,6 @@ const getEventById = async (req, res) => {
 // Update Event
 const updateEvent = async (req, res) => {
   try {
-    /*   const event = events.find(e => e.id === parseInt(req.params.id));
-
-  if (!event) {
-    return res.status(404).json({ message: 'Event not found' });
-  }
-
-  const { group_id, title, description, event_date, status } = req.body;
-
-  if (group_id) event.group_id = group_id;
-  if (title) event.title = title;
-  if (description) event.description = description;
-  if (event_date) event.event_date = event_date;
-  if (status) event.status = status;
-
-    event.updatedAt = new Date();
-
-  res.json(event);   */
     const { group_id, title, description, event_date, status } = req.body;
 
     const query = `
@@ -189,14 +145,6 @@ const updateEvent = async (req, res) => {
 // Delete Event
 const deleteEvent = async (req, res) => {
   try {
-    /*   const index = events.findIndex(e => e.id === parseInt(req.params.id));
-
-  if (index === -1) {
-    return res.status(404).json({ message: 'Event not found' });
-  }
-
-  events.splice(index, 1);
-  res.json({ message: 'Event deleted successfully' });   */
     const query = `
       DELETE FROM events
       WHERE id = $1
