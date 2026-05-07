@@ -1,5 +1,5 @@
 const db = require('../config/db.postgres'); // Placeholder for future DB integration
-const { BadRequestError, NotFoundError} = require('../errors');
+const { BadRequestError, NotFoundError } = require('../errors');
 
 /*   // In-memory store for now (replace with DB later)
 let events = [];
@@ -23,7 +23,7 @@ const createEvent = async (req, res, next) => {
     // Basic validation
     if (!group_id || !title || !event_date || !status || !created_by) {
       throw new BadRequestError(
-        'group_id, title and event_date, status and created_by are required'
+        'group_id, title and event_date, status and created_by are required',
       );
     }
 
@@ -70,7 +70,7 @@ const createEvent = async (req, res, next) => {
 
     return res.status(201).json(result.rows[0]);
   } catch (error) {
-      next(error);
+    next(error);
   }
 };
 
@@ -116,7 +116,7 @@ const getEventById = async (req, res, next) => {
 
     return res.json(result.rows[0]);
   } catch (error) {
-   next(error);
+    next(error);
   }
 };
 
@@ -173,7 +173,7 @@ const updateEvent = async (req, res, next) => {
     return res.json(result.rows[0]);
   } catch (error) {
     next(error);
-   /*  res
+    /*  res
       .status(500)
       .json({ message: 'Error updating event', error: error.message }); */
   }
@@ -198,7 +198,7 @@ const deleteEvent = async (req, res, next) => {
 
     const result = await db.query(query, [req.params.id]);
 
-    if (result.rows.length === 0) { 
+    if (result.rows.length === 0) {
       throw new NotFoundError('Event not found');
     }
 
@@ -207,7 +207,7 @@ const deleteEvent = async (req, res, next) => {
       event: result.rows[0],
     });
   } catch (error) {
-   next(error);   
+    next(error);
   }
 };
 

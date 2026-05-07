@@ -1,5 +1,5 @@
 const db = require('../config/db.postgres');
-const { BadRequestError, NotFoundError, } = require('../errors');
+const { BadRequestError, NotFoundError } = require('../errors');
 
 // Helpers
 const parseId = (id) => {
@@ -87,7 +87,7 @@ const getAllGroups = async (req, res, next) => {
 
     return sendSuccess(res, result.rows);
   } catch (error) {
-   /* return sendError(res, 'Error fetching groups', error);*/
+    /* return sendError(res, 'Error fetching groups', error);*/
     next(error);
   }
 };
@@ -112,7 +112,7 @@ const getGroupById = async (req, res, next) => {
     return sendSuccess(res, result.rows[0]);
   } catch (error) {
     /*return sendError(res, 'Error fetching group', error);*/
-     next(error);
+    next(error);
   }
 };
 
@@ -179,7 +179,7 @@ const deleteGroup = async (req, res, next) => {
     });
   } catch (error) {
     /*return sendError(res, 'Error deleting group', error);*/
-     next(error);
+    next(error);
   }
 };
 

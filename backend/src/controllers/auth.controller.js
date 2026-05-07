@@ -2,11 +2,13 @@ const crypto = require('crypto');
 const util = require('util');
 const jwt = require('jsonwebtoken');
 const pool = require('../config/db.postgres');
-const {BadRequestError, UnauthorizedError, ConflictError} = require('../errors');
+const {
+  BadRequestError,
+  UnauthorizedError,
+  ConflictError,
+} = require('../errors');
 
 const scrypt = util.promisify(crypto.scrypt);
-
-
 
 async function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString('hex');
@@ -34,9 +36,7 @@ const registerUser = async (req, res, next) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      throw new BadRequestError(
-        'Name, email, and password are required'
-      );
+      throw new BadRequestError('Name, email, and password are required');
     }
 
     const existingUser = await pool.query(
@@ -91,7 +91,6 @@ const loginUser = async (req, res, next) => {
     const isMatch = await comparePassword(password, user.password_hash);
 
     if (!isMatch) {
-
       throw new UnauthorizedError('Invalid credentials');
     }
 
@@ -114,6 +113,5 @@ const loginUser = async (req, res, next) => {
     next(error);
   }
 };
-
 
 module.exports = { registerUser, loginUser };
