@@ -5,8 +5,8 @@ This guide explains the basic PostgreSQL commands we will use most often in the 
 The backend uses the `pg` npm package. Its `Pool` object manages database connections for us. We will usually wrap the pool in a small helper similar to this:
 
 ```js
-import "./env.js";
-import pkg from "pg";
+import './env.js';
+import pkg from 'pg';
 
 const { Pool } = pkg;
 

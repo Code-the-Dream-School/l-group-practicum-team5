@@ -9,7 +9,10 @@
     "migrate": "node scripts/migrate.js",
     "migrate:create": "node-pg-migrate create",
     "migrate:up": "node scripts/migrate.js up",
-    "migrate:down": "node scripts/migrate.js down"
+    "migrate:down": "node scripts/migrate.js down",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -23,7 +26,12 @@
     "pg": "^8.11.5"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.3.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.6.0",
     "node-pg-migrate": "^8.0.3",
-    "nodemon": "^3.0.3"
+    "nodemon": "^3.0.3",
+    "prettier": "^3.8.3"
   }
 }

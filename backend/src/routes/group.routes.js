@@ -6,7 +6,7 @@ const {
   getAllGroups,
   getGroupById,
   updateGroup,
-  deleteGroup
+  deleteGroup,
 } = require('../controllers/group.controller');
 
 router.post('/groups', createGroup);

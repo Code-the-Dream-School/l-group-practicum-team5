@@ -82,3 +82,4 @@ These routes **require authentication**.
 ## 📌 Summary
 
 This document defines the initial API structure for the Gatherly backend and will evolve as features are implemented.
+```
