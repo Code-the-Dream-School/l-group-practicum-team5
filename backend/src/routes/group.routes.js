@@ -14,10 +14,10 @@ const {
   validateUpdateGroup
 } = require('../validations/group.validation');
 
-router.post('/groups', validateCreateGroup, createGroup);
-router.get('/groups', getAllGroups);
-router.get('/groups/:id', getGroupById);
-router.put('/groups/:id', validateUpdateGroup, updateGroup);
-router.delete('/groups/:id', deleteGroup);
+router.post('/', validateCreateGroup, createGroup);
+router.get('/', getAllGroups);
+router.get('/:id', getGroupById);
+router.put('/:id', validateUpdateGroup, updateGroup);
+router.delete('/:id', deleteGroup);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const validStatuses = ['upcoming', 'active', 'completed', 'cancelled'];
+const validStatuses = ['planned', 'completed', 'cancelled'];
 
 const validateCreateEvent = (req, res, next) => {
   const {
@@ -34,7 +34,7 @@ const validateCreateEvent = (req, res, next) => {
   if (!validStatuses.includes(status.toLowerCase())) {
     return res.status(400).json({
       message:
-        'Invalid status. Allowed values: upcoming, active, completed, cancelled'
+        'Invalid status. Allowed values: planned, completed, cancelled'
     });
   }
 
@@ -65,7 +65,7 @@ const validateUpdateEvent = (req, res, next) => {
   ) {
     return res.status(400).json({
       message:
-        'Invalid status. Allowed values: upcoming, active, completed, cancelled'
+        'Invalid status. Allowed values: planned, completed, cancelled'
     });
   }
 
