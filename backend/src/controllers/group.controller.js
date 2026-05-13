@@ -1,4 +1,5 @@
 const db = require('../config/db.postgres');
+const { BadRequestError, NotFoundError } = require('../errors');
 
 // Helpers
 const parseId = (id) => {
@@ -15,13 +16,13 @@ const sendSuccess = (res, data, status = 200) => {
   });
 };
 
-const sendError = (res, message, error = null, status = 500) => {
+/*const sendError = (res, message, error = null, status = 500) => {
   return res.status(status).json({
     success: false,
     message,
     error: error ? error.message : undefined,
   });
-};
+};*/
 
 // Generate random invite code
 const generateInviteCode = () => {
@@ -31,12 +32,12 @@ const generateInviteCode = () => {
 /**
  * CREATE GROUP
  */
-const createGroup = async (req, res) => {
+const createGroup = async (req, res, next) => {
   try {
     const { name, created_by } = req.body;
 
     if (!name || created_by == null) {
-      return sendError(res, 'name and created_by are required', null, 400);
+      throw new BadRequestError('name and created_by are required');
     }
 
     let invite_code;
@@ -66,14 +67,15 @@ const createGroup = async (req, res) => {
 
     return sendSuccess(res, result.rows[0], 201);
   } catch (error) {
-    return sendError(res, 'Error creating group', error);
+    /*return sendError(res, 'Error creating group', error);*/
+    next(error);
   }
 };
 
 /**
  * GET ALL GROUPS
  */
-const getAllGroups = async (req, res) => {
+const getAllGroups = async (req, res, next) => {
   try {
     const query = `
       SELECT *
@@ -85,42 +87,44 @@ const getAllGroups = async (req, res) => {
 
     return sendSuccess(res, result.rows);
   } catch (error) {
-    return sendError(res, 'Error fetching groups', error);
+    /* return sendError(res, 'Error fetching groups', error);*/
+    next(error);
   }
 };
 
 /**
  * GET GROUP BY ID
  */
-const getGroupById = async (req, res) => {
+const getGroupById = async (req, res, next) => {
   try {
     const id = parseId(req.params.id);
 
     if (!id) {
-      return sendError(res, 'Invalid group ID', null, 400);
+      throw new BadRequestError('Invalid group ID');
     }
 
     const result = await db.query('SELECT * FROM groups WHERE id = $1', [id]);
 
     if (result.rows.length === 0) {
-      return sendError(res, 'Group not found', null, 404);
+      throw new NotFoundError('Group not found');
     }
 
     return sendSuccess(res, result.rows[0]);
   } catch (error) {
-    return sendError(res, 'Error fetching group', error);
+    /*return sendError(res, 'Error fetching group', error);*/
+    next(error);
   }
 };
 
 /**
  * UPDATE GROUP
  */
-const updateGroup = async (req, res) => {
+const updateGroup = async (req, res, next) => {
   try {
     const id = parseId(req.params.id);
 
     if (!id) {
-      return sendError(res, 'Invalid group ID', null, 400);
+      throw new BadRequestError('Invalid group ID');
     }
 
     const { name } = req.body;
@@ -139,24 +143,25 @@ const updateGroup = async (req, res) => {
     const result = await db.query(query, values);
 
     if (result.rows.length === 0) {
-      return sendError(res, 'Group not found', null, 404);
+      throw new NotFoundError('Group not found');
     }
 
     return sendSuccess(res, result.rows[0]);
   } catch (error) {
-    return sendError(res, 'Error updating group', error);
+    /*return sendError(res, 'Error updating group', error);*/
+    next(error);
   }
 };
 
 /**
  * DELETE GROUP
  */
-const deleteGroup = async (req, res) => {
+const deleteGroup = async (req, res, next) => {
   try {
     const id = parseId(req.params.id);
 
     if (!id) {
-      return sendError(res, 'Invalid group ID', null, 400);
+      throw new BadRequestError('Invalid group ID');
     }
 
     const result = await db.query(
@@ -165,7 +170,7 @@ const deleteGroup = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return sendError(res, 'Group not found', null, 404);
+      throw new NotFoundError('Group not found');
     }
 
     return sendSuccess(res, {
@@ -173,7 +178,8 @@ const deleteGroup = async (req, res) => {
       deleted: result.rows[0],
     });
   } catch (error) {
-    return sendError(res, 'Error deleting group', error);
+    /*return sendError(res, 'Error deleting group', error);*/
+    next(error);
   }
 };
 
