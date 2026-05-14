@@ -10,6 +10,8 @@ const eventRoutes = require('./routes/event.routes');
 const groupRoutes = require('./routes/group.routes');
 const memberRoutes = require('./routes/member.routes');
 
+const errorHandlerMiddleware = require('./middleware/error-handler');
+
 const app = express();
 
 // Security & best‑practice middleware
@@ -20,7 +22,7 @@ app.use(morgan('dev'));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100
+  max: 100,
 });
 app.use(limiter);
 
@@ -32,6 +34,9 @@ app.use('/api/groups', groupRoutes);
 app.use('/api/groups', memberRoutes);
 
 
+
+//Middleware
+app.use(errorHandlerMiddleware);
 
 // Root route
 app.get('/', (req, res) => {
