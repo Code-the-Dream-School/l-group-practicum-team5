@@ -1,7 +1,7 @@
 import TextInputWithLabel from '../shared/TextInputWithLabel.tsx';
 
-const LoginForm = function ({ onLogin }: any) {
-  const handleLogin = (e: any) => {
+const LoginForm = function ({ onLogin }) {
+  const handleLogin = (e) => {
     e.preventDefault();
     onLogin(e.target);
   };
@@ -21,6 +21,8 @@ const LoginForm = function ({ onLogin }: any) {
           onChange=""
           value=""
         />
+        <a href="">Forgot password?</a>
+        <a href="">Register</a>
         <button type="submit">Submit</button>
       </form>
     </>
