@@ -6,6 +6,7 @@ const {
   BadRequestError,
   UnauthorizedError,
   ConflictError,
+  NotFoundError,
 } = require('../errors');
 
 const scrypt = util.promisify(crypto.scrypt);
@@ -114,4 +115,30 @@ const loginUser = async (req, res, next) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+const getCurrentUser = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      throw new UnauthorizedError('Authentication required');
+    }
+
+    const result = await pool.query(
+      'SELECT id, name, email FROM users WHERE id = $1',
+      [userId],
+    );
+
+    if (result.rows.length === 0) {
+      throw new NotFoundError('User not found');
+    }
+
+    return res.status(200).json({
+      user: result.rows[0],
+    });
+  } catch (error) {
+    console.error('Get current user error:', error);
+    next(error);
+  }
+};
+
+module.exports = { registerUser, loginUser, getCurrentUser };
