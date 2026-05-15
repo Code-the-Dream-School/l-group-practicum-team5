@@ -7,10 +7,10 @@ const {
   removeGroupMember,
 } = require('../controllers/member.controller');
 
+const authenticateUser = require('../middleware/auth.middleware');
+
 router.get('/:groupId/members', getGroupMembers);
-router.delete('/:groupId/members/me', leaveGroup);
-router.delete('/:groupId/members/:userId', removeGroupMember);
+router.delete('/:groupId/members/me', authenticateUser, leaveGroup);
+router.delete('/:groupId/members/:userId', authenticateUser, removeGroupMember);
 
 module.exports = router;
-
-z;
