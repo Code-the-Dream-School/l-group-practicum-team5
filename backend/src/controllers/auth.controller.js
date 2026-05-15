@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const util = require('util');
+<<<<<<< Updated upstream
 const jwt = require('jsonwebtoken');
 const pool = require('../config/db.postgres');
 const {
@@ -8,6 +9,10 @@ const {
   ConflictError,
   NotFoundError,
 } = require('../errors');
+=======
+const {BadRequestError} = require('../errors')
+const {InternalServerError} = require('../errors');
+>>>>>>> Stashed changes
 
 const scrypt = util.promisify(crypto.scrypt);
 
@@ -110,8 +115,12 @@ const loginUser = async (req, res, next) => {
       },
     });
   } catch (error) {
+<<<<<<< Updated upstream
     console.error('Login error:', error);
     next(error);
+=======
+    throw new InternalServerError('Something went wrong');
+>>>>>>> Stashed changes
   }
 };
 
@@ -119,8 +128,13 @@ const getCurrentUser = async (req, res, next) => {
   try {
     const userId = req.user?.id;
 
+<<<<<<< Updated upstream
     if (!userId) {
       throw new UnauthorizedError('Authentication required');
+=======
+    if (!email || !password) {
+      throw new BadRequestError('Email and password are required');
+>>>>>>> Stashed changes
     }
 
     const result = await pool.query(
@@ -136,8 +150,12 @@ const getCurrentUser = async (req, res, next) => {
       user: result.rows[0],
     });
   } catch (error) {
+<<<<<<< Updated upstream
     console.error('Get current user error:', error);
     next(error);
+=======
+    throw new InternalServerError('Something went wrong');
+>>>>>>> Stashed changes
   }
 };
 
