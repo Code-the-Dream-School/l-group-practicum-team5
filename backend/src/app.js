@@ -33,8 +33,6 @@ app.use('/api/events', eventRoutes);
 app.use('/api/groups', groupRoutes);
 app.use('/api/groups', memberRoutes);
 
-
-
 //Middleware
 app.use(errorHandlerMiddleware);
 
