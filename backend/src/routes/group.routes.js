@@ -9,10 +9,15 @@ const {
   deleteGroup,
 } = require('../controllers/group.controller');
 
-router.post('/groups', createGroup);
-router.get('/groups', getAllGroups);
-router.get('/groups/:id', getGroupById);
-router.put('/groups/:id', updateGroup);
-router.delete('/groups/:id', deleteGroup);
+const {
+  validateCreateGroup,
+  validateUpdateGroup
+} = require('../validations/group.validation');
+
+router.post('/', validateCreateGroup, createGroup);
+router.get('/', getAllGroups);
+router.get('/:id', getGroupById);
+router.put('/:id', validateUpdateGroup, updateGroup);
+router.delete('/:id', deleteGroup);
 
 module.exports = router;
