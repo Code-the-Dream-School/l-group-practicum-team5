@@ -1,10 +1,11 @@
+const { ReasonPhrases, StatusCodes } = require('http-status-codes');
 const CustomError = require('./CustomError');
 
 class UnauthorizedError extends CustomError {
   constructor(message) {
     super(message);
-    this.statusCode = 401;
-    this.message = 'Unauthorized: ' + message;
+    this.statusCode = StatusCodes.UNAUTHORIZED;
+    this.message = `${ReasonPhrases.UNAUTHORIZED}: ${message}`;
   }
 }
 
