@@ -31,12 +31,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/groups', groupRoutes);
 
-// Middleware
-app.use(errorHandlerMiddleware);
-
 // Root route
 app.get('/', (req, res) => {
   res.send('Backend API is running');
 });
+
+// Error handler
+app.use(errorHandlerMiddleware);
 
 module.exports = app;

@@ -122,11 +122,10 @@ const getCurrentUser = async (req, res, next) => {
       throw new NotFoundError('User not found');
     }
 
-    return res.status(200).json({
+    return res.status(StatusCodes.OK).json({
       user: result.rows[0],
     });
   } catch (error) {
-    console.error('Get current user error:', error);
     next(error);
   }
 };
