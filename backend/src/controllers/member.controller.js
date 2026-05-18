@@ -33,8 +33,8 @@ const leaveGroup = async (req, res, next) => {
     const { groupId } = req.params;
     const userId = parseInt(req.user.id);
 
-    if (!groupId) {
-      throw new BadRequestError('Group ID is required');
+    if (!groupId || !userId) {
+      throw new BadRequestError('Group ID and User ID are required');
     }
 
     const groupcheckQuery = await db.query(
@@ -45,10 +45,6 @@ const leaveGroup = async (req, res, next) => {
     `,
       [groupId],
     );
-
-    if (!userId) {
-      throw new BadRequestError('User ID is required');
-    }
 
     if (groupcheckQuery.rows.length === 0) {
       throw new NotFoundError(`Group ${groupId} not found`);

@@ -9,7 +9,7 @@ const {
 
 const authenticateUser = require('../middleware/auth.middleware');
 
-router.get('/:groupId/members', getGroupMembers);
+router.get('/:groupId/members', authenticateUser, getGroupMembers);
 router.delete('/:groupId/members/me', authenticateUser, leaveGroup);
 router.delete('/:groupId/members/:userId', authenticateUser, removeGroupMember);
 
