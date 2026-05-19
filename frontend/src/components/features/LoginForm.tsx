@@ -1,25 +1,33 @@
 import TextInputWithLabel from '../shared/TextInputWithLabel.tsx';
+import { useState } from 'react';
 
-const LoginForm = function ({ onLogin }) {
-  const handleLogin = (e) => {
-    e.preventDefault();
-    onLogin(e.target);
+interface LoginFormProps {
+  onLogin: (data: { email: string; password: string }) => void;
+}
+
+const LoginForm = function ({ onLogin }: LoginFormProps) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    onLogin({ email, password });
   };
 
   return (
     <>
       <form onSubmit={handleLogin}>
         <TextInputWithLabel
-          elementId="Email"
+          elementId="email"
           label="Email"
-          onChange=""
-          value=""
+          onChange={(e: React.ChangeEvent<HTMLInputElement >) => setEmail(e.currentTarget.value)}
+          value={email}
         />
         <TextInputWithLabel
-          elementId="Password"
+          elementId="password"
           label="Password"
-          onChange=""
-          value=""
+          onChange={(e: React.ChangeEvent<HTMLInputElement >) => setPassword(e.currentTarget.value)}
+          value={password}
+          type="password"
         />
         <a href="">Forgot password?</a>
         <a href="">Register</a>
