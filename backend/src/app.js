@@ -10,7 +10,7 @@ const eventRoutes = require('./routes/event.routes');
 const groupRoutes = require('./routes/group.routes');
 
 const errorHandlerMiddleware = require('./middleware/errorHandler');
-
+const authenticateUser = require('./middleware/auth.middleware');
 const app = express();
 
 // Security & best‑practice middleware
@@ -28,8 +28,8 @@ app.use(limiter);
 // Routes
 app.use('/api/hello', helloRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/events', eventRoutes);
-app.use('/api/groups', groupRoutes);
+app.use('/api/events', authenticateUser, eventRoutes);
+app.use('/api/groups', authenticateUser, groupRoutes);
 
 // Root route
 app.get('/', (req, res) => {
