@@ -8,6 +8,7 @@ const helloRoutes = require('./routes/hello.routes');
 const authRoutes = require('./routes/auth.routes');
 const eventRoutes = require('./routes/event.routes');
 const groupRoutes = require('./routes/group.routes');
+const ideaRoutes = require('./routes/idea.route');
 
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
@@ -30,7 +31,7 @@ app.use('/api/hello', helloRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/groups', groupRoutes);
-
+app.use('/api/ideas', ideaRoutes);
 //Middleware
 app.use(errorHandlerMiddleware);
 
