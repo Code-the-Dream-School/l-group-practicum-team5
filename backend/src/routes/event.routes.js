@@ -11,7 +11,7 @@ const {
 
 const {
   validateCreateEvent,
-  validateUpdateEvent
+  validateUpdateEvent,
 } = require('../validations/event.validation');
 
 // CRUD Routes

@@ -11,7 +11,7 @@ const {
 
 const {
   validateCreateGroup,
-  validateUpdateGroup
+  validateUpdateGroup,
 } = require('../validations/group.validation');
 
 router.post('/', validateCreateGroup, createGroup);
