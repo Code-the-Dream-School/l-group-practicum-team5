@@ -30,10 +30,9 @@ app.use(limiter);
 // Routes
 app.use('/api/hello', helloRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/groups', memberRoutes);
 app.use('/api/events', authenticateUser, eventRoutes);
 app.use('/api/groups', authenticateUser, groupRoutes);
-
+app.use('/api/groups', memberRoutes);
 
 
 // Root route
