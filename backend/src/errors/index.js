@@ -1,9 +1,9 @@
-const CustomError = require('./CustomError.js');
-const UnauthorizedError = require('./UnauthorizedError.js');
-const BadRequestError = require('./BadRequestError.js');
-const NotFoundError = require('./NotFoundError.js');
-const InternalServerError = require('./internalServerError.js');
-const ConflictError = require('./ConflictError.js');
+const CustomError = require('./CustomError');
+const UnauthorizedError = require('./UnauthorizedError');
+const BadRequestError = require('./BadRequestError');
+const NotFoundError = require('./NotFoundError');
+const InternalServerError = require('./internalServerError');
+const ConflictError = require('./ConflictError');
 
 module.exports = {
   CustomError,

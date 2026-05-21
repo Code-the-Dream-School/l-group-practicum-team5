@@ -10,9 +10,8 @@ const eventRoutes = require('./routes/event.routes');
 const groupRoutes = require('./routes/group.routes');
 const memberRoutes = require('./routes/member.routes');
 
-const errorHandlerMiddleware = require('./middleware/error-handler');
+const errorHandlerMiddleware = require('./middleware/errorHandler');
 const authenticateUser = require('./middleware/auth.middleware');
-
 const app = express();
 
 // Security & best‑practice middleware
@@ -33,7 +32,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/events', authenticateUser, eventRoutes);
 app.use('/api/groups', authenticateUser, groupRoutes);
 app.use('/api/groups', memberRoutes);
-
 
 // Root route
 app.get('/', (req, res) => {
