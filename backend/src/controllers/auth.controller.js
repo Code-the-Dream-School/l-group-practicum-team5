@@ -1,9 +1,9 @@
 const crypto = require('crypto');
 const util = require('util');
 const jwt = require('jsonwebtoken');
+const { StatusCodes } = require('http-status-codes');
 const pool = require('../config/db.postgres');
 const {
-  BadRequestError,
   UnauthorizedError,
   ConflictError,
   NotFoundError,
@@ -36,10 +36,6 @@ const registerUser = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-      throw new BadRequestError('Name, email, and password are required');
-    }
-
     const existingUser = await pool.query(
       `
       SELECT id FROM users WHERE email = $1
@@ -60,12 +56,11 @@ const registerUser = async (req, res, next) => {
       [name, email, hashedPassword],
     );
 
-    return res.status(201).json({
+    return res.status(StatusCodes.CREATED).json({
       message: 'User registered successfully',
       user: newUser.rows[0],
     });
   } catch (error) {
-    console.error('Register error:', error);
     next(error);
   }
 };
@@ -73,10 +68,6 @@ const registerUser = async (req, res, next) => {
 const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      throw new BadRequestError('Email and password are required');
-    }
 
     const result = await pool.query(
       'SELECT id, name, email, password_hash FROM users WHERE email = $1',
@@ -100,7 +91,7 @@ const loginUser = async (req, res, next) => {
       email: user.email,
     });
 
-    return res.status(200).json({
+    return res.status(StatusCodes.OK).json({
       message: 'Login successful',
       token,
       user: {
@@ -110,7 +101,6 @@ const loginUser = async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
     next(error);
   }
 };
@@ -132,11 +122,10 @@ const getCurrentUser = async (req, res, next) => {
       throw new NotFoundError('User not found');
     }
 
-    return res.status(200).json({
+    return res.status(StatusCodes.OK).json({
       user: result.rows[0],
     });
   } catch (error) {
-    console.error('Get current user error:', error);
     next(error);
   }
 };

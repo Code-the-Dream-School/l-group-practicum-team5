@@ -9,9 +9,8 @@ const authRoutes = require('./routes/auth.routes');
 const eventRoutes = require('./routes/event.routes');
 const groupRoutes = require('./routes/group.routes');
 
-const errorHandlerMiddleware = require('./middleware/error-handler');
+const errorHandlerMiddleware = require('./middleware/errorHandler');
 const authenticateUser = require('./middleware/auth.middleware');
-
 const app = express();
 
 // Security & best‑practice middleware
@@ -32,12 +31,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/events', authenticateUser, eventRoutes);
 app.use('/api/groups', authenticateUser, groupRoutes);
 
-//Middleware
-app.use(errorHandlerMiddleware);
-
 // Root route
 app.get('/', (req, res) => {
   res.send('Backend API is running');
 });
+
+// Error handler
+app.use(errorHandlerMiddleware);
 
 module.exports = app;
