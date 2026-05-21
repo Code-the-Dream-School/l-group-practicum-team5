@@ -30,16 +30,18 @@ app.use(limiter);
 // Routes
 app.use('/api/hello', helloRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/members', memberRoutes);
+app.use('/api/groups', memberRoutes);
 app.use('/api/events', authenticateUser, eventRoutes);
 app.use('/api/groups', authenticateUser, groupRoutes);
 
-//Middleware
-app.use(errorHandlerMiddleware);
+
 
 // Root route
 app.get('/', (req, res) => {
   res.send('Backend API is running');
 });
+
+//Middlewar
+app.use(errorHandlerMiddleware);
 
 module.exports = app;
