@@ -2,8 +2,8 @@ const db = require('../config/db.postgres');
 const { BadRequestError, NotFoundError, ForbiddenError } = require('../errors');
 
 const parseId = (id) => {
-  const parsed = Number.parseInt(id, 10);
-  return Number.isNaN(parsed) ? null : parsed;
+  const parsed = Number(id);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 };
 
 const checkGroupExists = async (groupId) => {
