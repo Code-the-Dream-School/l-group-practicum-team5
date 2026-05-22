@@ -9,7 +9,7 @@ interface InputProps {
 function TextInputWithLabel({ elementId, label, onChange, value, type }: InputProps) {
   return (
     <div>
-      <label htmlFor={elementId}>{label}</label>
+      <label htmlFor={elementId}>{label} </label>
       <input type={type ?? "text"} id={elementId} value={value} onChange={onChange} />
     </div>
   );

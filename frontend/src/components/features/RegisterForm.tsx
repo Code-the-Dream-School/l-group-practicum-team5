@@ -20,8 +20,8 @@ const RegisterForm = function ({ onRegister }: LoginFormProps) {
   };
 
   return (
-    <div>
-      <form onSubmit={handleRegister}>
+    
+      <form>
         <TextInputWithLabel
           elementId="name"
           label="Name"
@@ -53,13 +53,13 @@ const RegisterForm = function ({ onRegister }: LoginFormProps) {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setConfirmPassword(e.currentTarget.value)
           }
-          value={password}
+          value={confirmPassword}
           type="password"
         />
 
-        <button type="submit">Submit</button>
+        <button onClick={handleRegister}>Submit</button>
       </form>
-    </div>
+    
   );
 };
 
