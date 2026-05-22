@@ -1,12 +1,11 @@
-import { useEffect, useState } from 'react';
-import './App.css';
 
 
 function App() {
   const [message, setMessage] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Call the backend API
     fetch('http://localhost:8080/api/hello')
       .then((response) => {
         if (!response.ok) {
@@ -23,27 +22,17 @@ function App() {
   }, []);
 
   return (
-    <div className="dashboard-container">
-      <header className="dashboard-header">
-        <div className="header-content">
-          <h1 className="header-title">Frontend ↔ Backend Test</h1>
-        </div>
-      </header>
+    <main style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+      <h1>Frontend ↔ Backend Test</h1>
 
-      <main className="dashboard-main">
-        <div className="card">
-          <h2 className="card-title">API Status</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
 
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-
-          {!error && (
-            <p>
-              Message from API: <strong>{message || 'Loading...'}</strong>
-            </p>
-          )}
-        </div>
-      </main>
-    </div>
+      {!error && (
+        <p>
+          Message from API: <strong>{message}</strong>
+        </p>
+      )}
+    </main>
   );
 }
 
