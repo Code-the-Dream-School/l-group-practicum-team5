@@ -32,8 +32,9 @@ app.use('/api/hello', helloRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/events', authenticateUser, eventRoutes);
 app.use('/api/groups', authenticateUser, groupRoutes);
+app.use('/api/ideas', authenticateUser, ideaRoutes);
 app.use('/api/groups', memberRoutes);
-app.use('/api/ideas', ideaRoutes);
+
 
 // Root route
 app.get('/', (req, res) => {

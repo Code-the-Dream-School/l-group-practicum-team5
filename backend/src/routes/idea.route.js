@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const authMiddleware = require('../middleware/auth.middleware');
+
 
 const {
   getIdeaById,
@@ -9,8 +9,8 @@ const {
 } = require('../controllers/idea.controller');
 
 
-router.get('/:ideaId', authMiddleware, getIdeaById);
-router.put('/:ideaId', authMiddleware, updateIdea);
-router.delete('/:ideaId', authMiddleware, deleteIdea);
+router.get('/:ideaId',  getIdeaById);
+router.put('/:ideaId', updateIdea);
+router.delete('/:ideaId', deleteIdea);
 
 module.exports = router;
