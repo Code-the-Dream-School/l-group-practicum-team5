@@ -1,4 +1,5 @@
 const db = require('../config/db.postgres');
+const { StatusCodes } = require('http-status-codes');
 const { BadRequestError, NotFoundError } = require('../errors');
 
 const createIdea = async (req, res, next) => {
@@ -56,7 +57,7 @@ const createIdea = async (req, res, next) => {
       userId,
     ]);
 
-    res.status(201).json({ idea: result.rows[0] });
+    res.status(StatusCodes.CREATED).json({ idea: result.rows[0] });
   } catch (error) {
     next(error);
   }
@@ -95,7 +96,7 @@ const getGroupIdeas = async (req, res, next) => {
 
     const result = await db.query(query, [groupId]);
 
-    res.status(200).json({ ideas: result.rows });
+    res.status(StatusCodes.OK).json({ ideas: result.rows });
   } catch (error) {
     next(error);
   }
@@ -135,7 +136,7 @@ const getIdeaById = async (req, res, next) => {
       );
     }
 
-    res.status(200).json({ idea });
+    res.status(StatusCodes.OK).json({ idea });
   } catch (error) {
     next(error);
   }
@@ -189,7 +190,7 @@ const updateIdea = async (req, res, next) => {
       ideaId,
     ]);
 
-    res.status(200).json({ idea: result.rows[0] });
+    res.status(StatusCodes.OK).json({ idea: result.rows[0] });
   } catch (error) {
     next(error);
   }
@@ -225,7 +226,7 @@ const deleteIdea = async (req, res, next) => {
 
     const result = await db.query(deleteQuery, [ideaId]);
 
-    res.status(200).json({ message: 'Idea deleted successfully' });
+    res.status(StatusCodes.OK).json({ message: 'Idea deleted successfully' });
   } catch (error) {
     next(error);
   }
