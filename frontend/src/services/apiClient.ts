@@ -7,6 +7,7 @@ export type QueryValue = string | number | boolean | null | undefined;
 export type ApiClientOptions = Omit<RequestInit, 'body'> & {
   body?: unknown;
   query?: Record<string, QueryValue>;
+  // Explicit bearer token support will remain until auth moves to HttpOnly cookies.
   token?: string | null;
 };
 
@@ -38,10 +39,7 @@ const buildUrl = (
   const normalizedEndpoint = endpoint.startsWith('/')
     ? endpoint
     : `/${endpoint}`;
-  const url = new URL(
-    `${API_BASE_URL}${normalizedEndpoint}`,
-    window.location.origin,
-  );
+  const url = new URL(`${API_BASE_URL}${normalizedEndpoint}`);
 
   if (query) {
     Object.entries(query).forEach(([key, value]) => {
@@ -103,6 +101,7 @@ const request = async <T>(
   }
 
   const response = await fetch(buildUrl(endpoint, query), {
+    credentials: 'include',
     ...fetchOptions,
     headers: requestHeaders,
     body: body === undefined ? undefined : JSON.stringify(body),
