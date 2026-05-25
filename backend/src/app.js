@@ -35,7 +35,6 @@ app.use('/api/groups', authenticateUser, groupRoutes);
 app.use('/api/ideas', authenticateUser, ideaRoutes);
 app.use('/api/groups', memberRoutes);
 
-
 // Root route
 app.get('/', (req, res) => {
   res.send('Backend API is running');

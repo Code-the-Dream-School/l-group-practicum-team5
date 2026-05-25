@@ -38,16 +38,23 @@ const createIdea = async (req, res, next) => {
     );
 
     if (memberCheck.rows.length === 0) {
-      throw new BadRequestError('You must be a member of the group to create an idea');
+      throw new BadRequestError(
+        'You must be a member of the group to create an idea',
+      );
     }
-    
-    const createIdeaQuery  = `
+
+    const createIdeaQuery = `
       INSERT INTO ideas (title, description, group_id, created_by)
       VALUES ($1, $2, $3, $4)
       RETURNING id, title, description, group_id, created_by, created_at;
     `;
 
-    const result = await db.query(createIdeaQuery, [title, description, groupId, userId]);
+    const result = await db.query(createIdeaQuery, [
+      title,
+      description,
+      groupId,
+      userId,
+    ]);
 
     res.status(201).json({ idea: result.rows[0] });
   } catch (error) {
@@ -56,7 +63,7 @@ const createIdea = async (req, res, next) => {
 };
 
 const getGroupIdeas = async (req, res, next) => {
-    try {
+  try {
     const { groupId } = req.params;
     const userId = parseInt(req.user.id);
 
@@ -74,7 +81,9 @@ const getGroupIdeas = async (req, res, next) => {
     );
 
     if (memberCheck.rows.length === 0) {
-      throw new BadRequestError('You must be a member of the group to view its ideas');
+      throw new BadRequestError(
+        'You must be a member of the group to view its ideas',
+      );
     }
 
     const query = `
@@ -87,8 +96,7 @@ const getGroupIdeas = async (req, res, next) => {
     const result = await db.query(query, [groupId]);
 
     res.status(200).json({ ideas: result.rows });
-
-    } catch (error) {
+  } catch (error) {
     next(error);
   }
 };
@@ -110,7 +118,7 @@ const getIdeaById = async (req, res, next) => {
       throw new NotFoundError(`Idea ${ideaId} not found`);
     }
 
-    const idea = result.rows[0];  
+    const idea = result.rows[0];
 
     const memberCheck = await db.query(
       `
@@ -122,7 +130,9 @@ const getIdeaById = async (req, res, next) => {
     );
 
     if (memberCheck.rows.length === 0) {
-      throw new BadRequestError('You must be a member of the group to view this idea');
+      throw new BadRequestError(
+        'You must be a member of the group to view this idea',
+      );
     }
 
     res.status(200).json({ idea });
@@ -142,7 +152,9 @@ const updateIdea = async (req, res, next) => {
     }
 
     if (!title && !description) {
-      throw new BadRequestError('At least one of title or description is required');
+      throw new BadRequestError(
+        'At least one of title or description is required',
+      );
     }
 
     const ideaCheckQuery = await db.query(
@@ -161,7 +173,7 @@ const updateIdea = async (req, res, next) => {
     if (parseInt(ideaCheckQuery.rows[0].created_by) !== userId) {
       throw new BadRequestError('You are not the owner of this idea');
     }
-    
+
     const updatequery = `
       UPDATE ideas
       SET title = COALESCE($1, title),
@@ -171,19 +183,23 @@ const updateIdea = async (req, res, next) => {
         RETURNING id, title, description, group_id, created_by, created_at, updated_at;
         `;
 
-        const result = await db.query(updatequery, [title|| null, description|| null, ideaId]);
+    const result = await db.query(updatequery, [
+      title || null,
+      description || null,
+      ideaId,
+    ]);
 
-        res.status(200).json({ idea: result.rows[0] });
+    res.status(200).json({ idea: result.rows[0] });
   } catch (error) {
     next(error);
-  } 
+  }
 };
 
 const deleteIdea = async (req, res, next) => {
-  try{
+  try {
     const { ideaId } = req.params;
     const userId = parseInt(req.user.id);
-    
+
     const ideaCheckQuery = await db.query(
       `
       SELECT created_by
