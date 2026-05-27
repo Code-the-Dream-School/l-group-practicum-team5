@@ -15,7 +15,7 @@ const LoginForm = function ({ onLogin }: LoginFormProps) {
 
   return (
     <>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={(e) => { e.preventDefault(); handleLogin();}}>
         <TextInputWithLabel
           elementId="email"
           label="Email"
