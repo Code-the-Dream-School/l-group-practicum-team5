@@ -1,18 +1,7 @@
-const db = require('../config/db.postgres'); // Placeholder for future DB integration
+const { StatusCodes } = require('http-status-codes');
+const db = require('../config/db.postgres');
 const { BadRequestError, NotFoundError } = require('../errors');
-
-/*   // In-memory store for now (replace with DB later)
-let events = [];
-let idCounter = 1;   */
-
-// Helper: safely convert undefined → null (important for SQL COALESCE)
-const clean = (value) => (value === undefined ? null : value);
-
-// Helper: parse ID safely
-const parseId = (id) => {
-  const parsed = parseInt(id, 10);
-  return Number.isNaN(parsed) ? null : parsed;
-};
+const { sendSuccess } = require('../utils/response');
 
 // Create Event
 const createEvent = async (req, res, next) => {
@@ -53,7 +42,7 @@ const createEvent = async (req, res, next) => {
 
     const result = await db.query(query, values);
 
-    return res.status(201).json(result.rows[0]);
+    return sendSuccess(res, result.rows[0], StatusCodes.CREATED);
   } catch (error) {
     next(error);
   }
@@ -70,7 +59,7 @@ const getAllEvents = async (req, res, next) => {
 
     const result = await db.query(query);
 
-    return res.json(result.rows);
+    return sendSuccess(res, result.rows);
   } catch (error) {
     next(error);
   }
@@ -91,7 +80,7 @@ const getEventById = async (req, res, next) => {
       throw new NotFoundError('Event not found');
     }
 
-    return res.json(result.rows[0]);
+    return sendSuccess(res, result.rows[0]);
   } catch (error) {
     next(error);
   }
@@ -130,12 +119,9 @@ const updateEvent = async (req, res, next) => {
       throw new NotFoundError('Event not found');
     }
 
-    return res.json(result.rows[0]);
+    return sendSuccess(res, result.rows[0]);
   } catch (error) {
     next(error);
-    /*  res
-      .status(500)
-      .json({ message: 'Error updating event', error: error.message }); */
   }
 };
 
@@ -154,10 +140,12 @@ const deleteEvent = async (req, res, next) => {
       throw new NotFoundError('Event not found');
     }
 
-    return res.json({
-      message: 'Event deleted successfully',
-      event: result.rows[0],
-    });
+    return sendSuccess(
+      res,
+      { event: result.rows[0] },
+      StatusCodes.OK,
+      'Event deleted successfully',
+    );
   } catch (error) {
     next(error);
   }
