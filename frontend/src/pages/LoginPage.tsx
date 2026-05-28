@@ -6,10 +6,10 @@ const onLogin = (data: { email: string; password: string }) => {
 
 function LoginPage() {
   return (
-    <>
-      <h1>Login page</h1>
+    <div className='bg-indigo-400/25 h-screen'>
+      
       <LoginForm onLogin={onLogin} />
-    </>
+    </div>
   );
 }
 
