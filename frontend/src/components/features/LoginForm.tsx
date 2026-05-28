@@ -15,26 +15,52 @@ const LoginForm = function ({ onLogin }: LoginFormProps) {
     setEmail('');
   };
 
+  const containerStyling =
+    'container m-auto mt-5 max-w-4/10 text-center bg-indigo-50 pt-2 pb-2 pr-5 pl-5 rounded-4xl';
+  const buttonStyling =
+    'bg-[#5200c5] hover:bg-[#8340e0] text-white p-2 m-8 rounded-xl';
+
   return (
-    <div className='container max-w-1/2  m-auto bg-indigo-50 pt-2 pb-2 pr-5 pl-5 rounded-4xl'>
-      <h1>Login</h1>
-      <form onSubmit={(e) => { e.preventDefault(); handleLogin();}}>
-        <TextInputWithLabel
-          elementId="email"
-          label="Email"
-          onChange={(e: React.ChangeEvent<HTMLInputElement >) => setEmail(e.currentTarget.value)}
-          value={email}
-        />
-        <TextInputWithLabel
-          elementId="password"
-          label="Password"
-          onChange={(e: React.ChangeEvent<HTMLInputElement >) => setPassword(e.currentTarget.value)}
-          value={password}
-          type="password"
-        />
-        {/*<a href="">Forgot password?</a>*/}
-        <a href="">Register</a> <br/>
-        <button type="submit">Submit</button>
+    <div className={containerStyling}>
+      <h1 className="text-xl pt-3 pb-7">Login</h1>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleLogin();
+        }}
+      >
+        <div className='grid-cols-2 justify-start'>
+          <TextInputWithLabel
+            elementId="email"
+            label="Email"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setEmail(e.currentTarget.value)
+            }
+            value={email}
+          />
+          <TextInputWithLabel
+            elementId="password"
+            label="Password"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.currentTarget.value)
+            }
+            value={password}
+            type="password"
+          />
+        </div>
+
+        <button
+          className={buttonStyling}
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+          }}
+        >
+          Register
+        </button>
+        <button className={buttonStyling} type="submit">
+          Login
+        </button>
       </form>
     </div>
   );

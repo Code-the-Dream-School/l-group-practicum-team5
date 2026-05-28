@@ -14,14 +14,14 @@ function TextInputWithLabel({
   type,
 }: InputProps) {
   const inputStyling =
-    'bg-white border-3 border-indigo-500/50  m-auto rounded-2xl pt-.5 pb-.5 pr-2 pl-2';
-  const labelStyling = 'm-auto';
+    'bg-white border-3 border-indigo-500/50 hover:border-[#d1b1ff] m-auto mb-3 rounded-2xl pt-.5 pb-.5 pr-2 pl-2';
+  const labelStyling = 'm-auto mb-3';
   return (
-    <div>
+    <div className="p-1">
       <label className={labelStyling} htmlFor={elementId}>
-        {label}:
+        {label}:{' '}
       </label>
-      <br />
+
       <input
         className={inputStyling}
         type={type ?? 'text'}
