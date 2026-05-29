@@ -2,14 +2,14 @@ import LoginForm from '../components/features/LoginForm.tsx';
 import LoginHeader from '../components/shared/HeaderWithoutInvite.tsx';
 import '../Dashboard/dashboardlayout.css';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const onLogin = async (data: { email: string; password: string }) => {
     try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

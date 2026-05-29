@@ -14,8 +14,8 @@ function TextInputWithLabel({
   type,
 }: InputProps) {
   const inputStyling =
-    'bg-white border-3 border-indigo-500/50 hover:border-[#d1b1ff] mb-3 rounded-3xl p-1';
-  const labelStyling = 'm-auto mb-3 justify-right';
+    'bg-white border-2 border-indigo-500/50 hover:border-[#d1b1ff] mb-3 rounded-3xl p-1';
+  const labelStyling = 'm-auto mb-3 ';
   return (
     <div className=' p-1  m-auto '>
       <label className={labelStyling} htmlFor={elementId}>

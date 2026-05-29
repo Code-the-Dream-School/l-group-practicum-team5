@@ -1,6 +1,6 @@
 import TextInputWithLabel from '../shared/TextInputWithLabel.tsx';
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 interface LoginFormProps {
   onLogin: (data: { email: string; password: string }) => void;
@@ -17,7 +17,7 @@ const LoginForm = function ({ onLogin }: LoginFormProps) {
   };
 
   const containerStyling =
-    'container m-auto mt-5 max-w-4/10 text-center bg-white pt-2 pb-2 pr-5 pl-5 rounded-4xl';
+    'container m-auto mt-5 w-4/10 text-center bg-white pt-2 pb-2 pr-5 pl-5 rounded-4xl';
   const buttonStyling =
     'bg-[#5200c5] hover:bg-[#8340e0] text-white p-2 m-8 rounded-xl';
 
