@@ -1,12 +1,11 @@
-import { useState } from 'react';
 import LoginForm from '../components/features/LoginForm.tsx';
 import LoginHeader from '../components/shared/HeaderWithoutInvite.tsx';
-import { redirect } from 'react-router-dom';
-
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
 
 function LoginPage() {
   const [error, setError] = useState('');
-
+  const navigate = useNavigate();
   const onLogin = async (data: { email: string; password: string }) => {
     try {
       const response = await fetch('http://localhost:8080/api/login', {
@@ -19,9 +18,9 @@ function LoginPage() {
 
       const result = await response.json();
       if (result.message == 'Login successful') {
-        redirect("/dashboard");
+        navigate('/dashboard');
       } else {
-        setError('Login Failed');
+        setError('Invalid Credentials');
       }
     } catch (err) {
       if (err) {
@@ -30,13 +29,14 @@ function LoginPage() {
     }
   };
   let errorStyling = '';
-  if(error !== ''){
-    errorStyling = 'm-auto mt-5 w-1/5 p-1 bg-[#ff2651] text-white border-3 rounded-xl border-[#a00020] text-center';
+  if (error !== '') {
+    errorStyling =
+      'm-auto mt-5 w-1/5 p-1 bg-[#ff2651] text-white border-3 rounded-xl border-[#a00020] text-center';
   }
   return (
     <div className="bg-indigo-400/25 h-screen">
       <LoginHeader />
-      
+
       <LoginForm onLogin={onLogin} />
       <p className={errorStyling}>{error}</p>
     </div>
