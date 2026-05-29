@@ -8,7 +8,7 @@ const helloRoutes = require('./routes/hello.routes');
 const authRoutes = require('./routes/auth.routes');
 const eventRoutes = require('./routes/event.routes');
 const groupRoutes = require('./routes/group.routes');
-const ideaRoutes = require('./routes/idea.route');
+const ideaRoutes = require('./routes/idea.routes');
 const memberRoutes = require('./routes/member.routes');
 
 const errorHandlerMiddleware = require('./middleware/errorHandler');

@@ -35,7 +35,17 @@ router.delete(
   removeGroupMember,
 );
 
-router.post('/:groupId/ideas', authenticateUser, createIdea);
-router.get('/:groupId/ideas', authenticateUser, getGroupIdeas);
+router.post(
+  '/:groupId/ideas',
+  authenticateUser,
+  authorizeGroupMember('groupId'),
+  createIdea,
+);
+router.get(
+  '/:groupId/ideas',
+  authenticateUser,
+  authorizeGroupMember('groupId'),
+  getGroupIdeas,
+);
 
 module.exports = router;

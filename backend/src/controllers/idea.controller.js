@@ -1,6 +1,6 @@
 const db = require('../config/db.postgres');
 const { StatusCodes } = require('http-status-codes');
-const { BadRequestError, NotFoundError } = require('../errors');
+const { BadRequestError, NotFoundError, ForbiddenError } = require('../errors');
 
 const createIdea = async (req, res, next) => {
   try {
@@ -10,38 +10,6 @@ const createIdea = async (req, res, next) => {
 
     if (!title || !description) {
       throw new BadRequestError('Title and description are required');
-    }
-
-    if (!groupId) {
-      throw new BadRequestError('Group ID is required');
-    }
-
-    const groupCheck = await db.query(
-      `
-      SELECT id
-      FROM groups
-      WHERE id = $1;
-      `,
-      [groupId],
-    );
-
-    if (groupCheck.rows.length === 0) {
-      throw new NotFoundError(`Group ${groupId} not found`);
-    }
-
-    const memberCheck = await db.query(
-      `
-      SELECT id
-      FROM group_members
-      WHERE group_id = $1 AND user_id = $2;
-      `,
-      [groupId, userId],
-    );
-
-    if (memberCheck.rows.length === 0) {
-      throw new BadRequestError(
-        'You must be a member of the group to create an idea',
-      );
     }
 
     const createIdeaQuery = `
@@ -68,25 +36,6 @@ const getGroupIdeas = async (req, res, next) => {
     const { groupId } = req.params;
     const userId = parseInt(req.user.id);
 
-    if (!groupId) {
-      throw new BadRequestError('Group ID is required');
-    }
-
-    const memberCheck = await db.query(
-      `
-      SELECT id
-      FROM group_members
-      WHERE group_id = $1 AND user_id = $2;
-      `,
-      [groupId, userId],
-    );
-
-    if (memberCheck.rows.length === 0) {
-      throw new BadRequestError(
-        'You must be a member of the group to view its ideas',
-      );
-    }
-
     const query = `
       SELECT id, title, description, group_id, created_by, created_at, updated_at
       FROM ideas
@@ -107,6 +56,11 @@ const getIdeaById = async (req, res, next) => {
     const { ideaId } = req.params;
     const userId = parseInt(req.user.id);
 
+    const parsed = Number(ideaId);
+    if (!Number.isInteger(parsed) || parsed <= 0) {
+      throw new BadRequestError('Invalid idea ID');
+    }
+
     const query = `
       SELECT id, title, description, group_id, created_by, created_at, updated_at
       FROM ideas
@@ -121,21 +75,6 @@ const getIdeaById = async (req, res, next) => {
 
     const idea = result.rows[0];
 
-    const memberCheck = await db.query(
-      `
-      SELECT id
-      FROM group_members
-      WHERE group_id = $1 AND user_id = $2;
-      `,
-      [idea.group_id, userId],
-    );
-
-    if (memberCheck.rows.length === 0) {
-      throw new BadRequestError(
-        'You must be a member of the group to view this idea',
-      );
-    }
-
     res.status(StatusCodes.OK).json({ idea });
   } catch (error) {
     next(error);
@@ -148,8 +87,9 @@ const updateIdea = async (req, res, next) => {
     const { title, description } = req.body;
     const userId = parseInt(req.user.id);
 
-    if (!ideaId) {
-      throw new BadRequestError('Idea ID is required');
+    const parsed = Number(ideaId);
+    if (!Number.isInteger(parsed) || parsed <= 0) {
+      throw new BadRequestError('Invalid idea ID');
     }
 
     if (!title && !description) {
@@ -172,7 +112,7 @@ const updateIdea = async (req, res, next) => {
     }
 
     if (parseInt(ideaCheckQuery.rows[0].created_by) !== userId) {
-      throw new BadRequestError('You are not the owner of this idea');
+      throw new ForbiddenError('You are not the owner of this idea');
     }
 
     const updatequery = `
@@ -201,6 +141,11 @@ const deleteIdea = async (req, res, next) => {
     const { ideaId } = req.params;
     const userId = parseInt(req.user.id);
 
+    const parsed = Number(ideaId);
+    if (!Number.isInteger(parsed) || parsed <= 0) {
+      throw new BadRequestError('Invalid idea ID');
+    }
+
     const ideaCheckQuery = await db.query(
       `
       SELECT created_by
@@ -215,7 +160,7 @@ const deleteIdea = async (req, res, next) => {
     }
 
     if (parseInt(ideaCheckQuery.rows[0].created_by) !== userId) {
-      throw new BadRequestError('You are not the owner of this idea');
+      throw new ForbiddenError('You are not the owner of this idea');
     }
 
     const deleteQuery = `
@@ -224,7 +169,7 @@ const deleteIdea = async (req, res, next) => {
       RETURNING id;
     `;
 
-    const result = await db.query(deleteQuery, [ideaId]);
+    await db.query(deleteQuery, [ideaId]);
 
     res.status(StatusCodes.OK).json({ message: 'Idea deleted successfully' });
   } catch (error) {
