@@ -1,6 +1,6 @@
 import RegisterForm from '../components/features/RegisterForm.tsx';
 import HeaderWithoutInvite from '../components/shared/HeaderWithoutInvite.tsx';
-import { redirect } from 'react-router';
+import { redirect } from 'react-router-dom';
 import { useState } from 'react';
 
 function RegisterPage() {
