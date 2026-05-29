@@ -29,7 +29,7 @@ const LoginForm = function ({ onLogin }: LoginFormProps) {
           handleLogin();
         }}
       >
-        <div className='grid-cols-2 justify-start'>
+        <div >
           <TextInputWithLabel
             elementId="email"
             label="Email"

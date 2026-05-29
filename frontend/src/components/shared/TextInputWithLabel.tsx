@@ -1,7 +1,7 @@
 interface InputProps {
   elementId: string;
   label: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // Is this how I should set the type for onChange?
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value: string;
   type?: string;
 }
@@ -15,9 +15,9 @@ function TextInputWithLabel({
 }: InputProps) {
   const inputStyling =
     'bg-white border-3 border-indigo-500/50 hover:border-[#d1b1ff] m-auto mb-3 rounded-2xl pt-.5 pb-.5 pr-2 pl-2';
-  const labelStyling = 'm-auto mb-3';
+  const labelStyling = 'm-auto mb-3 justify-right';
   return (
-    <div className="p-1">
+    <div className='p-1 grid grid-cols-2 m-auto w-1/3'>
       <label className={labelStyling} htmlFor={elementId}>
         {label}:{' '}
       </label>
