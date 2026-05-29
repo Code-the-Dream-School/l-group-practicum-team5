@@ -3,14 +3,14 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.tsx';
 import RegisterPage from './pages/RegisterPage.tsx';
-import DashboardPage from './pages/DashboardPage.tsx';
+import DashboardLayout from './Dashboard/DashboardLayout.tsx';
 import NotFoundPage from './pages/NotFoundPage.tsx';
 import './index.css';
 
 const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
   { path: '/', element: <RegisterPage /> },
-  { path: '/dashboard', element: <DashboardPage /> },
+  { path: '/dashboard', element: <DashboardLayout /> },
   { path: '*', element: <NotFoundPage /> },
 ]);
 
