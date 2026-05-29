@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import LoginForm from '../components/features/LoginForm.tsx';
 import LoginHeader from '../components/shared/HeaderWithoutInvite.tsx';
-import { redirect } from 'react-router';
+import { redirect } from 'react-router-dom';
 
 
 function LoginPage() {
