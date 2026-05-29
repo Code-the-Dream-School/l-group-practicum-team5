@@ -1,5 +1,6 @@
 import LoginForm from '../components/features/LoginForm.tsx';
 import LoginHeader from '../components/shared/HeaderWithoutInvite.tsx';
+import '../Dashboard/dashboardlayout.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -34,7 +35,7 @@ function LoginPage() {
       'm-auto mt-5 w-1/6 p-1 bg-[#ff2651] text-white rounded-3xl text-center';
   }
   return (
-    <div className="bg-indigo-400/25 h-screen">
+    <div className="dashboard-container">
       <LoginHeader />
 
       <LoginForm onLogin={onLogin} />
