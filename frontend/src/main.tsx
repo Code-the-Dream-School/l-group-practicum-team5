@@ -8,8 +8,8 @@ import NotFoundPage from './pages/NotFoundPage.tsx';
 import './index.css';
 
 const router = createBrowserRouter([
-  { path: '/login', element: <LoginPage /> },
   { path: '/', element: <RegisterPage /> },
+  { path: '/login', element: <LoginPage /> },
   { path: '/dashboard', element: <DashboardLayout /> },
   { path: '*', element: <NotFoundPage /> },
 ]);
