@@ -1,0 +1,96 @@
+/* Gatherly Dashboard Layout - Traditional CSS */
+
+/* ========================================
+   Container & Page Layout
+   ======================================== */
+
+   .dashboard-container {
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #faf5ff, #fdf2f8, #eff6ff);
+  }
+  
+  /* ========================================
+     Header
+     ======================================== */
+  
+  .dashboard-header {
+    background: white;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  
+  .header-content {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .header-logo {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    background: linear-gradient(to bottom right, #9333ea, #db2777);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .header-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+  }
+  
+  .header-subtitle {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .invite-code-box {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #f9fafb;
+    border-radius: 0.5rem;
+  }
+  
+  @media (min-width: 768px) {
+    .invite-code-box {
+      display: flex;
+    }
+  }
+  
+  .button-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+  }
+  
+  .button-icon:hover {
+    background: #f3f4f6;
+  }
+  
+  /* ========================================
+     Main Content
+     ======================================== */
+  
+  
