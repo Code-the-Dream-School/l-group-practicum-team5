@@ -31,7 +31,7 @@ function LoginPage() {
   let errorStyling = '';
   if (error !== '') {
     errorStyling =
-      'm-auto mt-5 w-1/5 p-1 bg-[#ff2651] text-white border-3 rounded-xl border-[#a00020] text-center';
+      'm-auto mt-5 w-1/6 p-1 bg-[#ff2651] text-white rounded-3xl text-center';
   }
   return (
     <div className="bg-indigo-400/25 h-screen">
