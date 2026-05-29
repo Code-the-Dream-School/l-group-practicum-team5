@@ -40,7 +40,7 @@ function RegisterPage() {
   let errorStyling = '';
   if (error !== '') {
     errorStyling =
-      'm-auto mt-5 w-1/5 p-1 bg-[#ff2651] text-white border-3 rounded-xl border-[#a00020] text-center';
+      'm-auto mt-5 w-1/5 p-1 bg-[#ff2651] text-white border-3 rounded-xl text-center';
   }
 
   return (
