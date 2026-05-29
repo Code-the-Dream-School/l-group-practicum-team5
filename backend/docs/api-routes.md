@@ -16,18 +16,18 @@ This document describes the current backend API route structure for the Gatherly
 
 These routes are public and do not require authentication.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | /api/auth/register | Register a new user |
-| POST | /api/auth/login | Log in a user and return a JWT |
+| Method | Endpoint           | Description                    |
+| ------ | ------------------ | ------------------------------ |
+| POST   | /api/auth/register | Register a new user            |
+| POST   | /api/auth/login    | Log in a user and return a JWT |
 
 ### Protected Authentication Routes
 
 These routes require authentication.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/auth/me | Get the currently authenticated user |
+| Method | Endpoint     | Description                          |
+| ------ | ------------ | ------------------------------------ |
+| GET    | /api/auth/me | Get the currently authenticated user |
 
 #### GET /api/auth/me
 
@@ -43,10 +43,13 @@ Expected response example:
 
 ```json
 {
-  "user": {
-    "id": 1,
-    "name": "Example User",
-    "email": "user@example.com"
+  "success": true,
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "Example User",
+      "email": "user@example.com"
+    }
   }
 }
 ```
@@ -57,11 +60,11 @@ Expected response example:
 
 These routes require authentication.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | /api/groups | Create a new group |
-| POST | /api/groups/join | Join a group using an invite code |
-| GET | /api/groups/:groupId | Get group details |
+| Method | Endpoint             | Description                       |
+| ------ | -------------------- | --------------------------------- |
+| POST   | /api/groups          | Create a new group                |
+| POST   | /api/groups/join     | Join a group using an invite code |
+| GET    | /api/groups/:groupId | Get group details                 |
 
 Group-specific routes also require the authenticated user to be a member of the requested group where group membership authorization is applied.
 
@@ -71,11 +74,11 @@ Group-specific routes also require the authenticated user to be a member of the 
 
 These routes require authentication and group membership authorization.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/groups/:groupId/members | Get all members for a group |
-| DELETE | /api/groups/:groupId/members/me | Leave a group as the authenticated user |
-| DELETE | /api/groups/:groupId/members/:userId | Remove a member from a group |
+| Method | Endpoint                             | Description                             |
+| ------ | ------------------------------------ | --------------------------------------- |
+| GET    | /api/groups/:groupId/members         | Get all members for a group             |
+| DELETE | /api/groups/:groupId/members/me      | Leave a group as the authenticated user |
+| DELETE | /api/groups/:groupId/members/:userId | Remove a member from a group            |
 
 ### Member Route Notes
 
@@ -91,10 +94,10 @@ These routes require authentication and group membership authorization.
 
 These routes require authentication.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/groups/:groupId/events | Get all events for a group |
-| POST | /api/groups/:groupId/events | Create a new event |
+| Method | Endpoint                    | Description                |
+| ------ | --------------------------- | -------------------------- |
+| GET    | /api/groups/:groupId/events | Get all events for a group |
+| POST   | /api/groups/:groupId/events | Create a new event         |
 
 Group event routes require the authenticated user to be a member of the requested group where group membership authorization is applied.
 
@@ -104,10 +107,10 @@ Group event routes require the authenticated user to be a member of the requeste
 
 These routes are planned for the MVP, but idea route implementation is still in progress.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/groups/:groupId/ideas | Get all ideas for a group |
-| POST | /api/groups/:groupId/ideas | Create a new idea |
+| Method | Endpoint                   | Description               |
+| ------ | -------------------------- | ------------------------- |
+| GET    | /api/groups/:groupId/ideas | Get all ideas for a group |
+| POST   | /api/groups/:groupId/ideas | Create a new idea         |
 
 ---
 
