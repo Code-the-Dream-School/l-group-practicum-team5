@@ -1,5 +1,6 @@
 import RegisterForm from '../components/features/RegisterForm.tsx';
 import HeaderWithoutInvite from '../components/shared/HeaderWithoutInvite.tsx';
+import '../Dashboard/dashboardlayout.css';
 import { redirect } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -12,7 +13,7 @@ function RegisterPage() {
     password: string;
   }) => {
     try {
-      const response = await fetch('http://localhost:8080/api/register', {
+      const response = await fetch('http://localhost:8080/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,7 +44,7 @@ function RegisterPage() {
   }
 
   return (
-    <div className="bg-indigo-400/25 h-screen">
+    <div className="dashboard-container">
       <HeaderWithoutInvite />
 
       <RegisterForm onRegister={onRegister} />
