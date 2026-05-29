@@ -1,6 +1,6 @@
 import TextInputWithLabel from '../shared/TextInputWithLabel.tsx';
 import { useState } from 'react';
-import { Link } from "react-router";
+import { Link } from 'react-router';
 
 interface LoginFormProps {
   onLogin: (data: { email: string; password: string }) => void;
@@ -9,7 +9,7 @@ interface LoginFormProps {
 const LoginForm = function ({ onLogin }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  
   const handleLogin = async () => {
     onLogin({ email, password });
     setPassword('');
@@ -24,14 +24,14 @@ const LoginForm = function ({ onLogin }: LoginFormProps) {
   return (
     <div className={containerStyling}>
       <h1 className="text-xl pt-3 pb-2">Login</h1>
-      <hr className="pb-5 text-indigo-500/50"/>
+      <hr className="pb-5 text-indigo-500/50" />
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleLogin();
         }}
       >
-        <div >
+        <div>
           <TextInputWithLabel
             elementId="email"
             label="Email"
@@ -50,7 +50,9 @@ const LoginForm = function ({ onLogin }: LoginFormProps) {
             type="password"
           />
         </div>
-        <Link className={buttonStyling} to="/">Register</Link>
+        <Link className={buttonStyling} to="/">
+          Register
+        </Link>
         <button className={buttonStyling} type="submit">
           Login
         </button>
