@@ -1,12 +1,12 @@
 import RegisterForm from '../components/features/RegisterForm.tsx';
 import HeaderWithoutInvite from '../components/shared/HeaderWithoutInvite.tsx';
 import '../Dashboard/dashboardlayout.css';
-import { redirect } from 'react-router-dom';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function RegisterPage() {
   const [error, setError] = useState('');
-
+  const navigate = useNavigate();
   const onRegister = async (data: {
     name: string;
     email: string;
@@ -27,7 +27,7 @@ function RegisterPage() {
 
       const result = await response.json();
       if (result.message == 'User registered successfully') {
-        redirect('/login');
+        navigate('/login');
       } else {
         setError('Register Failed');
       }
