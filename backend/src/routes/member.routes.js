@@ -13,9 +13,15 @@ const {
   authorizeGroupMember,
 } = require('../middleware/groupAuthorization.middleware');
 
+const {
+  validateGroupIdParam,
+  validateUserIdParam,
+} = require('../validations/member.validation');
+
 router.get(
   '/:groupId/members',
   authenticateUser,
+  validateGroupIdParam,
   authorizeGroupMember('groupId'),
   getGroupMembers,
 );
@@ -23,6 +29,7 @@ router.get(
 router.delete(
   '/:groupId/members/me',
   authenticateUser,
+  validateGroupIdParam,
   authorizeGroupMember('groupId'),
   leaveGroup,
 );
@@ -30,6 +37,8 @@ router.delete(
 router.delete(
   '/:groupId/members/:userId',
   authenticateUser,
+  validateGroupIdParam,
+  validateUserIdParam,
   authorizeGroupMember('groupId'),
   removeGroupMember,
 );
