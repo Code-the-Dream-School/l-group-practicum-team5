@@ -19,7 +19,8 @@ These routes are public and do not require authentication.
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | /api/auth/register | Register a new user |
-| POST | /api/auth/login | Log in a user and return a JWT |
+| POST | /api/auth/login | Log in a user and set an HttpOnly auth cookie |
+| POST | /api/auth/logout | Clear the auth cookie |
 
 ### Protected Authentication Routes
 
@@ -33,11 +34,14 @@ These routes require authentication.
 
 Returns the authenticated user's safe profile information.
 
-This route requires a valid JWT in the request header:
+This route requires a valid auth cookie from `POST /api/auth/login`.
+Frontend requests must include credentials so the browser sends the cookie:
 
 ```txt
-Authorization: Bearer <token>
+fetch(url, { credentials: 'include' })
 ```
+
+The backend still accepts `Authorization: Bearer <token>` as a temporary fallback for API testing and older clients, but frontend code should not store the JWT in JavaScript.
 
 Expected response example:
 
@@ -116,10 +120,13 @@ These routes are planned for the MVP, but idea route implementation is still in 
 - Public routes:
   - `POST /api/auth/register`
   - `POST /api/auth/login`
-- Protected routes require a JWT in the request header:
+- Protected routes require the HttpOnly auth cookie set by `POST /api/auth/login`.
+- Frontend requests should use credentialed requests so the browser sends the cookie automatically.
+- API testing tools can also send cookies from a cookie jar.
+- `Authorization: Bearer <token>` is still accepted as a temporary fallback for older clients.
 
 ```txt
-Authorization: Bearer <token>
+Cookie: gatherly_auth=<jwt>
 ```
 
 - Protected group-specific routes may also require group membership authorization.

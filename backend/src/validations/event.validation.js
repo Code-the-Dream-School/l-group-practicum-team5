@@ -1,40 +1,26 @@
 const validStatuses = ['planned', 'completed', 'cancelled'];
 
 const validateCreateEvent = (req, res, next) => {
-  const {
-    group_id,
-    title,
-    event_date,
-    status,
-    created_by
-  } = req.body;
+  const { group_id, title, event_date, status } = req.body;
 
   // Required fields
-  if (
-    !group_id ||
-    !title ||
-    !event_date ||
-    !status ||
-    !created_by
-  ) {
+  if (!group_id || !title || !event_date || !status) {
     return res.status(400).json({
-      message:
-        'group_id, title, event_date, status, and created_by are required'
+      message: 'group_id, title, event_date, and status are required',
     });
   }
 
   // Title validation
   if (title.trim().length < 3) {
     return res.status(400).json({
-      message: 'Title must be at least 3 characters long'
+      message: 'Title must be at least 3 characters long',
     });
   }
 
   // Status validation
   if (!validStatuses.includes(status.toLowerCase())) {
     return res.status(400).json({
-      message:
-        'Invalid status. Allowed values: planned, completed, cancelled'
+      message: 'Invalid status. Allowed values: planned, completed, cancelled',
     });
   }
 
@@ -43,7 +29,7 @@ const validateCreateEvent = (req, res, next) => {
 
   if (isNaN(parsedDate.getTime())) {
     return res.status(400).json({
-      message: 'Invalid event_date format'
+      message: 'Invalid event_date format',
     });
   }
 
@@ -55,17 +41,13 @@ const validateUpdateEvent = (req, res, next) => {
 
   if (title && title.trim().length < 3) {
     return res.status(400).json({
-      message: 'Title must be at least 3 characters long'
+      message: 'Title must be at least 3 characters long',
     });
   }
 
-  if (
-    status &&
-    !validStatuses.includes(status.toLowerCase())
-  ) {
+  if (status && !validStatuses.includes(status.toLowerCase())) {
     return res.status(400).json({
-      message:
-        'Invalid status. Allowed values: planned, completed, cancelled'
+      message: 'Invalid status. Allowed values: planned, completed, cancelled',
     });
   }
 
@@ -74,7 +56,7 @@ const validateUpdateEvent = (req, res, next) => {
 
     if (isNaN(parsedDate.getTime())) {
       return res.status(400).json({
-        message: 'Invalid event_date format'
+        message: 'Invalid event_date format',
       });
     }
   }
@@ -84,5 +66,5 @@ const validateUpdateEvent = (req, res, next) => {
 
 module.exports = {
   validateCreateEvent,
-  validateUpdateEvent
+  validateUpdateEvent,
 };

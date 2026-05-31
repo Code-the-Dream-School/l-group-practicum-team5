@@ -1,24 +1,17 @@
 const validateCreateGroup = (req, res, next) => {
-  const { name, invite_code, created_by } = req.body;
+  const { name } = req.body;
 
   // Required fields
-  if (!name || !invite_code || !created_by) {
+  if (!name) {
     return res.status(400).json({
-      message: 'name, invite_code, and created_by are required'
+      message: 'name is required',
     });
   }
 
   // Name validation
   if (typeof name !== 'string' || name.trim().length < 3) {
     return res.status(400).json({
-      message: 'Group name must be at least 3 characters long'
-    });
-  }
-
-  // Invite code validation
-  if (invite_code.length < 4 || invite_code.length > 20) {
-    return res.status(400).json({
-      message: 'Invite code must be between 4 and 20 characters'
+      message: 'Group name must be at least 3 characters long',
     });
   }
 
@@ -30,13 +23,13 @@ const validateUpdateGroup = (req, res, next) => {
 
   if (name && name.trim().length < 3) {
     return res.status(400).json({
-      message: 'Group name must be at least 3 characters long'
+      message: 'Group name must be at least 3 characters long',
     });
   }
 
   if (invite_code && (invite_code.length < 4 || invite_code.length > 20)) {
     return res.status(400).json({
-      message: 'Invite code must be between 4 and 20 characters'
+      message: 'Invite code must be between 4 and 20 characters',
     });
   }
 
@@ -45,5 +38,5 @@ const validateUpdateGroup = (req, res, next) => {
 
 module.exports = {
   validateCreateGroup,
-  validateUpdateGroup
+  validateUpdateGroup,
 };
