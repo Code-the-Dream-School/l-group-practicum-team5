@@ -112,8 +112,8 @@ const loginUser = async (req, res, next) => {
           email: user.email,
         },
       },
-      'Login successful',
       StatusCodes.OK,
+      'Login successful',
     );
   } catch (error) {
     next(error);
