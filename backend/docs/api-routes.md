@@ -47,10 +47,13 @@ Expected response example:
 
 ```json
 {
-  "user": {
-    "id": 1,
-    "name": "Example User",
-    "email": "user@example.com"
+  "success": true,
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "Example User",
+      "email": "user@example.com"
+    }
   }
 }
 ```

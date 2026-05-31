@@ -15,6 +15,7 @@ const {
   ConflictError,
   NotFoundError,
 } = require('../errors');
+const { sendSuccess } = require('../utils/response');
 
 const scrypt = util.promisify(crypto.scrypt);
 
@@ -63,10 +64,12 @@ const registerUser = async (req, res, next) => {
       [name, email, hashedPassword],
     );
 
-    return res.status(StatusCodes.CREATED).json({
-      message: 'User registered successfully',
-      user: newUser.rows[0],
-    });
+    return sendSuccess(
+      res,
+      { user: newUser.rows[0] },
+      StatusCodes.CREATED,
+      'User registered successfully',
+    );
   } catch (error) {
     next(error);
   }
@@ -100,14 +103,18 @@ const loginUser = async (req, res, next) => {
 
     res.cookie(getAuthCookieName(), token, getAuthCookieOptions());
 
-    return res.status(StatusCodes.OK).json({
-      message: 'Login successful',
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
+    return sendSuccess(
+      res,
+      {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
       },
-    });
+      'Login successful',
+      StatusCodes.OK,
+    );
   } catch (error) {
     next(error);
   }
@@ -138,9 +145,7 @@ const getCurrentUser = async (req, res, next) => {
       throw new NotFoundError('User not found');
     }
 
-    return res.status(StatusCodes.OK).json({
-      user: result.rows[0],
-    });
+    return sendSuccess(res, { user: result.rows[0] });
   } catch (error) {
     next(error);
   }

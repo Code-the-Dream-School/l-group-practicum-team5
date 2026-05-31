@@ -1,5 +1,7 @@
+const { StatusCodes } = require('http-status-codes');
 const db = require('../config/db.postgres');
 const { BadRequestError, NotFoundError } = require('../errors');
+const { sendSuccess } = require('../utils/response');
 
 // Helpers
 const parseId = (id) => {
@@ -8,21 +10,6 @@ const parseId = (id) => {
 };
 
 const clean = (value) => (value === undefined ? null : value);
-
-const sendSuccess = (res, data, status = 200) => {
-  return res.status(status).json({
-    success: true,
-    data,
-  });
-};
-
-/*const sendError = (res, message, error = null, status = 500) => {
-  return res.status(status).json({
-    success: false,
-    message,
-    error: error ? error.message : undefined,
-  });
-};*/
 
 // Generate random invite code
 const generateInviteCode = () => {
@@ -75,15 +62,16 @@ const createGroup = async (req, res, next) => {
 
     await client.query(
       `
-        INSERT INTO group_members (group_id, user_id, joined_at)
-        VALUES ($1, $2, NOW());
+        INSERT INTO group_members (group_id, user_id)
+        VALUES ($1, $2);
       `,
       [group.id, createdBy],
     );
 
     await client.query('COMMIT');
 
-    return sendSuccess(res, group, 201);
+    return sendSuccess(res, group, StatusCodes.CREATED);
+
   } catch (error) {
     if (client) {
       await client.query('ROLLBACK');
@@ -198,10 +186,12 @@ const deleteGroup = async (req, res, next) => {
       throw new NotFoundError('Group not found');
     }
 
-    return sendSuccess(res, {
-      message: 'Group deleted successfully',
-      deleted: result.rows[0],
-    });
+    return sendSuccess(
+      res,
+      { deleted: result.rows[0] },
+      StatusCodes.OK,
+      'Group deleted successfully',
+    );
   } catch (error) {
     /*return sendError(res, 'Error deleting group', error);*/
     next(error);
