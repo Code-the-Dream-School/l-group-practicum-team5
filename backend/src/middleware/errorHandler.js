@@ -1,22 +1,22 @@
 const { StatusCodes } = require('http-status-codes');
 const { CustomError } = require('../errors');
+const { sendError } = require('../utils/response');
 
+// eslint-disable-next-line no-unused-vars
 const errorHandlerMiddleware = (err, req, res, next) => {
   if (err instanceof CustomError) {
     const statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
-    const response = { msg: err.message };
 
-    if (err.details) {
-      response.errors = err.details;
-    }
-
-    return res.status(statusCode).json(response);
+    return sendError(res, err.message, statusCode, err.details);
   }
 
   console.error(err);
-  return res
-    .status(StatusCodes.INTERNAL_SERVER_ERROR)
-    .json({ msg: 'Something went wrong, try again later' });
+
+  return sendError(
+    res,
+    'Something went wrong, try again later',
+    StatusCodes.INTERNAL_SERVER_ERROR,
+  );
 };
 
 module.exports = errorHandlerMiddleware;

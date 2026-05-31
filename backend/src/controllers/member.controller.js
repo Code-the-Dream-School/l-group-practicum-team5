@@ -1,5 +1,7 @@
+const { StatusCodes } = require('http-status-codes');
 const db = require('../config/db.postgres');
 const { BadRequestError, NotFoundError } = require('../errors');
+const { sendSuccess } = require('../utils/response');
 
 const getGroupMembers = async (req, res, next) => {
   try {
@@ -22,7 +24,7 @@ const getGroupMembers = async (req, res, next) => {
       throw new NotFoundError('No members found for this group');
     }
 
-    res.status(200).json({ members: result.rows });
+    return sendSuccess(res, { members: result.rows });
   } catch (error) {
     next(error);
   }
@@ -78,7 +80,12 @@ const leaveGroup = async (req, res, next) => {
       [groupId, userId],
     );
 
-    res.status(200).json({ message: 'Successfully left the group' });
+    return sendSuccess(
+      res,
+      null,
+      StatusCodes.OK,
+      'Successfully left the group',
+    );
   } catch (error) {
     next(error);
   }
@@ -138,9 +145,12 @@ const removeGroupMember = async (req, res, next) => {
       [groupId, userId],
     );
 
-    res
-      .status(200)
-      .json({ message: 'Member successfully removed from the group' });
+    return sendSuccess(
+      res,
+      null,
+      StatusCodes.OK,
+      'Member successfully removed from the group',
+    );
   } catch (error) {
     next(error);
   }

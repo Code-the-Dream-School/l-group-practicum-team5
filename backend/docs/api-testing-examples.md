@@ -19,6 +19,8 @@ Authorization: Bearer <token>
 
 - Some current request examples include `created_by` because the current backend controllers require it in the request body.
 - Ideas routes are not included yet because they are still in progress.
+- Standard success responses use `success: true`, with response data inside `data` when applicable.
+- Standard error responses use `success: false` and `message`.
 
 ## Auth Routes
 
@@ -42,11 +44,14 @@ Expected success response:
 
 ```json
 {
+  "success": true,
   "message": "User registered successfully",
-  "user": {
-    "id": 1,
-    "name": "Test User",
-    "email": "test@example.com"
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "Test User",
+      "email": "test@example.com"
+    }
   }
 }
 ```
@@ -59,7 +64,8 @@ Possible error response if the email is already registered:
 
 ```json
 {
-  "msg": "Conflict: User already exists"
+  "success": false,
+  "message": "Conflict: User already exists"
 }
 ```
 
@@ -71,7 +77,8 @@ Possible validation error response:
 
 ```json
 {
-  "msg": "Bad Request: Validation failed",
+  "success": false,
+  "message": "Bad Request: Validation failed",
   "errors": [
     {
       "field": "email",
@@ -100,12 +107,15 @@ Expected success response:
 
 ```json
 {
+  "success": true,
   "message": "Login successful",
-  "token": "<token>",
-  "user": {
-    "id": 1,
-    "name": "Test User",
-    "email": "test@example.com"
+  "data": {
+    "token": "<token>",
+    "user": {
+      "id": 1,
+      "name": "Test User",
+      "email": "test@example.com"
+    }
   }
 }
 ```
@@ -120,7 +130,8 @@ Possible error response for invalid credentials:
 
 ```json
 {
-  "msg": "Unauthorized: Invalid credentials"
+  "success": false,
+  "message": "Unauthorized: Invalid credentials"
 }
 ```
 
@@ -139,10 +150,13 @@ Expected success response:
 
 ```json
 {
-  "user": {
-    "id": 1,
-    "name": "Test User",
-    "email": "test@example.com"
+  "success": true,
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "Test User",
+      "email": "test@example.com"
+    }
   }
 }
 ```
@@ -155,7 +169,8 @@ Possible error response if the token is missing:
 
 ```json
 {
-  "msg": "Unauthorized: Authentication required"
+  "success": false,
+  "message": "Unauthorized: Authentication required"
 }
 ```
 
@@ -167,7 +182,8 @@ Possible error response if the token is invalid or expired:
 
 ```json
 {
-  "msg": "Unauthorized: Invalid or expired token"
+  "success": false,
+  "message": "Unauthorized: Invalid or expired token"
 }
 ```
 
@@ -222,7 +238,8 @@ Possible validation error response:
 
 ```json
 {
-  "message": "name, invite_code, and created_by are required"
+  "success": false,
+  "message": "Bad Request: name, invite_code, and created_by are required"
 }
 ```
 
@@ -290,7 +307,8 @@ Possible error response if the authenticated user is not a member of the group:
 
 ```json
 {
-  "msg": "Forbidden: You are not a member of this group"
+  "success": false,
+  "message": "Forbidden: You are not a member of this group"
 }
 ```
 
@@ -333,7 +351,8 @@ Possible validation error response:
 
 ```json
 {
-  "message": "Group name must be at least 3 characters long"
+  "success": false,
+  "message": "Bad Request: Group name must be at least 3 characters long"
 }
 ```
 
@@ -353,8 +372,8 @@ Expected success response:
 ```json
 {
   "success": true,
+  "message": "Group deleted successfully",
   "data": {
-    "message": "Group deleted successfully",
     "deleted": {
       "id": 1,
       "name": "Test Group",
@@ -375,7 +394,8 @@ Possible error response if the group does not exist:
 
 ```json
 {
-  "msg": "Not Found: Group not found"
+  "success": false,
+  "message": "Not Found: Group not found"
 }
 ```
 
@@ -414,15 +434,18 @@ Expected success response:
 
 ```json
 {
-  "id": 1,
-  "group_id": 1,
-  "title": "Test Event",
-  "description": "Planning meeting for the group",
-  "event_date": "2026-06-01T18:00:00.000Z",
-  "status": "planned",
-  "created_by": 1,
-  "created_at": "2026-05-23T00:00:00.000Z",
-  "updated_at": "2026-05-23T00:00:00.000Z"
+  "success": true,
+  "data": {
+    "id": 1,
+    "group_id": 1,
+    "title": "Test Event",
+    "description": "Planning meeting for the group",
+    "event_date": "2026-06-01T18:00:00.000Z",
+    "status": "planned",
+    "created_by": 1,
+    "created_at": "2026-05-23T00:00:00.000Z",
+    "updated_at": "2026-05-23T00:00:00.000Z"
+  }
 }
 ```
 
@@ -434,7 +457,8 @@ Possible validation error response:
 
 ```json
 {
-  "message": "group_id, title, event_date, status, and created_by are required"
+  "success": false,
+  "message": "Bad Request: group_id, title, event_date, status, and created_by are required"
 }
 ```
 
@@ -446,7 +470,8 @@ Possible error response if the authenticated user is not a member of the group:
 
 ```json
 {
-  "msg": "Forbidden: You are not a member of this group"
+  "success": false,
+  "message": "Forbidden: You are not a member of this group"
 }
 ```
 
@@ -464,19 +489,22 @@ Expected success response:
 ```
 
 ```json
-[
-  {
-    "id": 1,
-    "group_id": 1,
-    "title": "Test Event",
-    "description": "Planning meeting for the group",
-    "event_date": "2026-06-01T18:00:00.000Z",
-    "status": "planned",
-    "created_by": 1,
-    "created_at": "2026-05-23T00:00:00.000Z",
-    "updated_at": "2026-05-23T00:00:00.000Z"
-  }
-]
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "group_id": 1,
+      "title": "Test Event",
+      "description": "Planning meeting for the group",
+      "event_date": "2026-06-01T18:00:00.000Z",
+      "status": "planned",
+      "created_by": 1,
+      "created_at": "2026-05-23T00:00:00.000Z",
+      "updated_at": "2026-05-23T00:00:00.000Z"
+    }
+  ]
+}
 ```
 
 ### Get an event by ID
@@ -494,15 +522,18 @@ Expected success response:
 
 ```json
 {
-  "id": 1,
-  "group_id": 1,
-  "title": "Test Event",
-  "description": "Planning meeting for the group",
-  "event_date": "2026-06-01T18:00:00.000Z",
-  "status": "planned",
-  "created_by": 1,
-  "created_at": "2026-05-23T00:00:00.000Z",
-  "updated_at": "2026-05-23T00:00:00.000Z"
+  "success": true,
+  "data": {
+    "id": 1,
+    "group_id": 1,
+    "title": "Test Event",
+    "description": "Planning meeting for the group",
+    "event_date": "2026-06-01T18:00:00.000Z",
+    "status": "planned",
+    "created_by": 1,
+    "created_at": "2026-05-23T00:00:00.000Z",
+    "updated_at": "2026-05-23T00:00:00.000Z"
+  }
 }
 ```
 
@@ -514,7 +545,8 @@ Possible error response if the event does not exist:
 
 ```json
 {
-  "msg": "Not Found: Event not found"
+  "success": false,
+  "message": "Not Found: Event not found"
 }
 ```
 
@@ -538,15 +570,18 @@ Expected success response:
 
 ```json
 {
-  "id": 1,
-  "group_id": 1,
-  "title": "Updated Test Event",
-  "description": "Planning meeting for the group",
-  "event_date": "2026-06-01T18:00:00.000Z",
-  "status": "completed",
-  "created_by": 1,
-  "created_at": "2026-05-23T00:00:00.000Z",
-  "updated_at": "2026-05-23T00:00:00.000Z"
+  "success": true,
+  "data": {
+    "id": 1,
+    "group_id": 1,
+    "title": "Updated Test Event",
+    "description": "Planning meeting for the group",
+    "event_date": "2026-06-01T18:00:00.000Z",
+    "status": "completed",
+    "created_by": 1,
+    "created_at": "2026-05-23T00:00:00.000Z",
+    "updated_at": "2026-05-23T00:00:00.000Z"
+  }
 }
 ```
 
@@ -558,7 +593,8 @@ Possible validation error response:
 
 ```json
 {
-  "message": "Invalid status. Allowed values: planned, completed, cancelled"
+  "success": false,
+  "message": "Bad Request: Invalid status. Allowed values: planned, completed, cancelled"
 }
 ```
 
@@ -577,17 +613,20 @@ Expected success response:
 
 ```json
 {
+  "success": true,
   "message": "Event deleted successfully",
-  "event": {
-    "id": 1,
-    "group_id": 1,
-    "title": "Test Event",
-    "description": "Planning meeting for the group",
-    "event_date": "2026-06-01T18:00:00.000Z",
-    "status": "planned",
-    "created_by": 1,
-    "created_at": "2026-05-23T00:00:00.000Z",
-    "updated_at": "2026-05-23T00:00:00.000Z"
+  "data": {
+    "event": {
+      "id": 1,
+      "group_id": 1,
+      "title": "Test Event",
+      "description": "Planning meeting for the group",
+      "event_date": "2026-06-01T18:00:00.000Z",
+      "status": "planned",
+      "created_by": 1,
+      "created_at": "2026-05-23T00:00:00.000Z",
+      "updated_at": "2026-05-23T00:00:00.000Z"
+    }
   }
 }
 ```
@@ -618,14 +657,17 @@ Expected success response:
 
 ```json
 {
-  "members": [
-    {
-      "id": 1,
-      "name": "Test User",
-      "email": "test@example.com",
-      "joined_at": "2026-05-23T00:00:00.000Z"
-    }
-  ]
+  "success": true,
+  "data": {
+    "members": [
+      {
+        "id": 1,
+        "name": "Test User",
+        "email": "test@example.com",
+        "joined_at": "2026-05-23T00:00:00.000Z"
+      }
+    ]
+  }
 }
 ```
 
@@ -637,7 +679,8 @@ Possible error response if the authenticated user is not a member of the group:
 
 ```json
 {
-  "msg": "Forbidden: You are not a member of this group"
+  "success": false,
+  "message": "Forbidden: You are not a member of this group"
 }
 ```
 
@@ -649,7 +692,8 @@ Possible error response if no members are found:
 
 ```json
 {
-  "msg": "Not Found: No members found for this group"
+  "success": false,
+  "message": "Not Found: No members found for this group"
 }
 ```
 
@@ -668,6 +712,7 @@ Expected success response:
 
 ```json
 {
+  "success": true,
   "message": "Successfully left the group"
 }
 ```
@@ -680,7 +725,8 @@ Possible error response if the authenticated user is the group creator:
 
 ```json
 {
-  "msg": "Bad Request: Group creators cannot leave their own group. Please delete the group instead."
+  "success": false,
+  "message": "Bad Request: Group creators cannot leave their own group. Please delete the group instead."
 }
 ```
 
@@ -692,7 +738,8 @@ Possible error response if the group does not exist:
 
 ```json
 {
-  "msg": "Not Found: Group not found"
+  "success": false,
+  "message": "Not Found: Group not found"
 }
 ```
 
@@ -711,6 +758,7 @@ Expected success response:
 
 ```json
 {
+  "success": true,
   "message": "Member successfully removed from the group"
 }
 ```
@@ -723,7 +771,8 @@ Possible error response if the authenticated user is not the group creator:
 
 ```json
 {
-  "msg": "Bad Request: Only group creators can remove members"
+  "success": false,
+  "message": "Bad Request: Only group creators can remove members"
 }
 ```
 
@@ -735,7 +784,8 @@ Possible error response if the group creator tries to remove themselves:
 
 ```json
 {
-  "msg": "Bad Request: Group creators cannot remove themselves. Please leave the group instead."
+  "success": false,
+  "message": "Bad Request: Group creators cannot remove themselves. Please leave the group instead."
 }
 ```
 
@@ -747,6 +797,7 @@ Possible error response if the target user is not a member of the group:
 
 ```json
 {
-  "msg": "Not Found: User 2 is not a member of group 1"
+  "success": false,
+  "message": "Not Found: User 2 is not a member of group 1"
 }
 ```
