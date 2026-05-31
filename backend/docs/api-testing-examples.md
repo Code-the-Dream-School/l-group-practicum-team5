@@ -169,7 +169,7 @@ Expected success response:
 }
 ```
 
-Possible error response if the auth cookie is missing:
+Possible error response if the auth cookie or Bearer token is missing:
 
 ```bash
 401 Unauthorized
@@ -195,7 +195,7 @@ Possible error response if the auth cookie is invalid or expired:
 
 ## Group Routes
 
-All group routes are protected and require a valid auth cookie.
+All group routes are protected and require a valid authentication cookie, with Bearer token fallback for API testing and older clients.
 
 Current implementation notes:
 
@@ -401,7 +401,7 @@ Possible error response if the group does not exist:
 
 ## Event Routes
 
-All event routes are protected and require a valid auth cookie.
+All event routes are protected and require a valid authentication cookie, with Bearer token fallback for API testing and older clients.
 
 Current implementation notes:
 
@@ -613,7 +613,7 @@ Expected success response:
 
 ## Member Routes
 
-All member routes are protected and require a valid auth cookie.
+All member routes are protected and require a valid authentication cookie, with Bearer token fallback for API testing and older clients.
 
 Current implementation notes:
 
