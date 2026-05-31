@@ -106,6 +106,10 @@ Create a `.env` file inside the `backend` folder:
 PORT=5000
 DATABASE_URL=your_database_url
 JWT_SECRET=your_secret_key
+JWT_LIFETIME=1d
+CORS_ORIGIN=http://localhost:5173
+COOKIE_SECURE=false
+COOKIE_SAMESITE=lax
 ```
 
 Backend runs on:  

@@ -10,14 +10,16 @@ http://localhost:5000
 
 ## Notes
 
-- Replace `<token>` with the JWT returned from the login response.
-- Protected routes require this header:
+- Log in with `curl -c cookies.txt` to save the HttpOnly auth cookie.
+- Protected routes should send the saved cookie with `curl -b cookies.txt`.
+- Frontend requests should use `credentials: 'include'` so the browser sends the auth cookie automatically.
+- `Authorization: Bearer <token>` is still accepted as a temporary fallback for older clients and manual API testing.
 
 ```bash
-Authorization: Bearer <token>
+curl -b cookies.txt http://localhost:5000/api/auth/me
 ```
 
-- Some current request examples include `created_by` because the current backend controllers require it in the request body.
+- Create routes derive `created_by` from the authenticated cookie. Do not send `created_by` in request bodies.
 - Ideas routes are not included yet because they are still in progress.
 - Standard success responses use `success: true`, with response data inside `data` when applicable.
 - Standard error responses use `success: false` and `message`.
@@ -92,6 +94,7 @@ Possible validation error response:
 
 ```bash
 curl -X POST http://localhost:5000/api/auth/login \
+  -c cookies.txt \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -109,18 +112,15 @@ Expected success response:
 {
   "success": true,
   "message": "Login successful",
-  "data": {
-    "token": "<token>",
-    "user": {
-      "id": 1,
-      "name": "Test User",
-      "email": "test@example.com"
-    }
+  "user": {
+    "id": 1,
+    "name": "Test User",
+    "email": "test@example.com"
   }
 }
 ```
 
-Save the returned token and use it for protected routes.
+The response sets an HttpOnly auth cookie. Save it with `curl -c cookies.txt` and use it for protected routes with `curl -b cookies.txt`.
 
 Possible error response for invalid credentials:
 
@@ -135,11 +135,31 @@ Possible error response for invalid credentials:
 }
 ```
 
+### Log out
+
+```bash
+curl -X POST http://localhost:5000/api/auth/logout \
+  -b cookies.txt \
+  -c cookies.txt
+```
+
+Expected success response:
+
+```bash
+200 OK
+```
+
+```json
+{
+  "message": "Logout successful"
+}
+```
+
 ### Get current user
 
 ```bash
 curl -X GET http://localhost:5000/api/auth/me \
-  -H "Authorization: Bearer <token>"
+  -b cookies.txt
 ```
 
 Expected success response:
@@ -161,7 +181,7 @@ Expected success response:
 }
 ```
 
-Possible error response if the token is missing:
+Possible error response if the auth cookie or Bearer token is missing:
 
 ```bash
 401 Unauthorized
@@ -174,7 +194,7 @@ Possible error response if the token is missing:
 }
 ```
 
-Possible error response if the token is invalid or expired:
+Possible error response if the auth cookie is invalid or expired:
 
 ```bash
 401 Unauthorized
@@ -189,12 +209,12 @@ Possible error response if the token is invalid or expired:
 
 ## Group Routes
 
-All group routes are protected and require a valid JWT.
+All group routes are protected and require a valid authentication cookie, with Bearer token fallback for API testing and older clients.
 
 Current implementation notes:
 
-- `POST /api/groups` currently requires `name`, `invite_code`, and `created_by` in the request body because of the current validation middleware.
-- The controller currently generates a new `invite_code`, so the returned `invite_code` may be different from the one sent in the request body.
+- `POST /api/groups` requires `name`; the server generates `invite_code` and uses the authenticated user as `created_by`.
+- Group creation also adds the creator to `group_members`.
 - `PUT /api/groups/:id` currently updates the group `name`.
 
 ### Create a group
@@ -202,11 +222,9 @@ Current implementation notes:
 ```bash
 curl -X POST http://localhost:5000/api/groups \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <token>" \
+  -b cookies.txt \
   -d '{
-    "name": "Test Group",
-    "invite_code": "TEST123",
-    "created_by": 1
+    "name": "Test Group"
   }'
 ```
 
@@ -238,8 +256,7 @@ Possible validation error response:
 
 ```json
 {
-  "success": false,
-  "message": "Bad Request: name, invite_code, and created_by are required"
+  "message": "name is required"
 }
 ```
 
@@ -247,7 +264,7 @@ Possible validation error response:
 
 ```bash
 curl -X GET http://localhost:5000/api/groups \
-  -H "Authorization: Bearer <token>"
+  -b cookies.txt
 ```
 
 Expected success response:
@@ -276,7 +293,7 @@ Expected success response:
 
 ```bash
 curl -X GET http://localhost:5000/api/groups/1 \
-  -H "Authorization: Bearer <token>"
+  -b cookies.txt
 ```
 
 Expected success response:
@@ -317,7 +334,7 @@ Possible error response if the authenticated user is not a member of the group:
 ```bash
 curl -X PUT http://localhost:5000/api/groups/1 \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <token>" \
+  -b cookies.txt \
   -d '{
     "name": "Updated Test Group"
   }'
@@ -360,7 +377,7 @@ Possible validation error response:
 
 ```bash
 curl -X DELETE http://localhost:5000/api/groups/1 \
-  -H "Authorization: Bearer <token>"
+  -b cookies.txt
 ```
 
 Expected success response:
@@ -401,11 +418,11 @@ Possible error response if the group does not exist:
 
 ## Event Routes
 
-All event routes are protected and require a valid JWT.
+All event routes are protected and require a valid authentication cookie, with Bearer token fallback for API testing and older clients.
 
 Current implementation notes:
 
-- `POST /api/events` currently requires `group_id`, `title`, `event_date`, `status`, and `created_by` in the request body.
+- `POST /api/events` requires `group_id`, `title`, `event_date`, and `status`; the server uses the authenticated user as `created_by`.
 - Valid event statuses are `planned`, `completed`, and `cancelled`.
 - `GET /api/events` currently returns all events for an authenticated user.
 - `GET /api/events/:id`, `PUT /api/events/:id`, and `DELETE /api/events/:id` check that the authenticated user belongs to the event's group.
@@ -415,14 +432,13 @@ Current implementation notes:
 ```bash
 curl -X POST http://localhost:5000/api/events \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <token>" \
+  -b cookies.txt \
   -d '{
     "group_id": 1,
     "title": "Test Event",
     "description": "Planning meeting for the group",
     "event_date": "2026-06-01T18:00:00.000Z",
-    "status": "planned",
-    "created_by": 1
+    "status": "planned"
   }'
 ```
 
@@ -457,8 +473,7 @@ Possible validation error response:
 
 ```json
 {
-  "success": false,
-  "message": "Bad Request: group_id, title, event_date, status, and created_by are required"
+  "message": "group_id, title, event_date, and status are required"
 }
 ```
 
@@ -479,7 +494,7 @@ Possible error response if the authenticated user is not a member of the group:
 
 ```bash
 curl -X GET http://localhost:5000/api/events \
-  -H "Authorization: Bearer <token>"
+  -b cookies.txt
 ```
 
 Expected success response:
@@ -511,7 +526,7 @@ Expected success response:
 
 ```bash
 curl -X GET http://localhost:5000/api/events/1 \
-  -H "Authorization: Bearer <token>"
+  -b cookies.txt
 ```
 
 Expected success response:
@@ -555,7 +570,7 @@ Possible error response if the event does not exist:
 ```bash
 curl -X PUT http://localhost:5000/api/events/1 \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <token>" \
+  -b cookies.txt \
   -d '{
     "title": "Updated Test Event",
     "status": "completed"
@@ -602,7 +617,7 @@ Possible validation error response:
 
 ```bash
 curl -X DELETE http://localhost:5000/api/events/1 \
-  -H "Authorization: Bearer <token>"
+  -b cookies.txt
 ```
 
 Expected success response:
@@ -633,7 +648,7 @@ Expected success response:
 
 ## Member Routes
 
-All member routes are protected and require a valid JWT.
+All member routes are protected and require a valid authentication cookie, with Bearer token fallback for API testing and older clients.
 
 Current implementation notes:
 
@@ -646,7 +661,7 @@ Current implementation notes:
 
 ```bash
 curl -X GET http://localhost:5000/api/groups/1/members \
-  -H "Authorization: Bearer <token>"
+  -b cookies.txt
 ```
 
 Expected success response:
@@ -701,7 +716,7 @@ Possible error response if no members are found:
 
 ```bash
 curl -X DELETE http://localhost:5000/api/groups/1/members/me \
-  -H "Authorization: Bearer <token>"
+  -b cookies.txt
 ```
 
 Expected success response:
@@ -747,7 +762,7 @@ Possible error response if the group does not exist:
 
 ```bash
 curl -X DELETE http://localhost:5000/api/groups/1/members/2 \
-  -H "Authorization: Bearer <token>"
+  -b cookies.txt
 ```
 
 Expected success response:
