@@ -8,11 +8,11 @@ const {
 } = require('../controllers/idea.controller');
 
 const {
-  authorizeGroupMember,
+  authorizeIdeaGroupMember,
 } = require('../middleware/groupAuthorization.middleware');
 
-router.get('/:ideaId', authorizeGroupMember('groupId'), getIdeaById);
-router.put('/:ideaId', authorizeGroupMember('groupId'), updateIdea);
-router.delete('/:ideaId', authorizeGroupMember('groupId'), deleteIdea);
+router.get('/:ideaId', authorizeIdeaGroupMember, getIdeaById);
+router.put('/:ideaId', authorizeIdeaGroupMember, updateIdea);
+router.delete('/:ideaId', authorizeIdeaGroupMember, deleteIdea);
 
 module.exports = router;
