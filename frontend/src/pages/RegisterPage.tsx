@@ -13,7 +13,7 @@ function RegisterPage() {
     password: string;
   }) => {
     try {
-      const response = await fetch('http://localhost:8080/api/auth/register', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,10 +26,10 @@ function RegisterPage() {
       });
 
       const result = await response.json();
-      if (result.message == 'User registered successfully') {
+      if (result.success == true) {
         navigate('/login');
       } else {
-        setError('Register Failed');
+        setError(result.message);
       }
     } catch (err) {
       if (err) {
