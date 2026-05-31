@@ -18,10 +18,10 @@ function LoginPage() {
       });
 
       const result = await response.json();
-      if (result.message == 'Login successful') {
+      if (result.success == true) {
         navigate('/dashboard');
       } else {
-        setError('Invalid Credentials');
+        setError(result.message);
       }
     } catch (err) {
       if (err) {
