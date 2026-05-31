@@ -6,13 +6,13 @@ const { sendSuccess } = require('../utils/response');
 // Create Event
 const createEvent = async (req, res, next) => {
   try {
-    const { group_id, title, description, event_date, status, created_by } =
-      req.body;
+    const { group_id, title, description, event_date, status } = req.body;
+    const createdBy = req.user?.id;
 
     // Basic validation
-    if (!group_id || !title || !event_date || !status || !created_by) {
+    if (!group_id || !title || !event_date || !status || createdBy == null) {
       throw new BadRequestError(
-        'group_id, title and event_date, status and created_by are required',
+        'group_id, title, event_date, status, and authenticated user are required',
       );
     }
 
@@ -37,7 +37,7 @@ const createEvent = async (req, res, next) => {
       description || '',
       event_date,
       status,
-      created_by,
+      createdBy,
     ];
 
     const result = await db.query(query, values);

@@ -4,6 +4,13 @@ const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
 const pool = require('../config/db.postgres');
 const {
+  getJwtSecret,
+  getJwtLifetime,
+  getAuthCookieName,
+  getAuthCookieOptions,
+  getClearAuthCookieOptions,
+} = require('../config/auth.config');
+const {
   UnauthorizedError,
   ConflictError,
   NotFoundError,
@@ -28,8 +35,8 @@ async function comparePassword(inputPassword, storedHash) {
 }
 
 function generateToken(payload) {
-  return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_LIFETIME,
+  return jwt.sign(payload, getJwtSecret(), {
+    expiresIn: getJwtLifetime(),
   });
 }
 
@@ -94,22 +101,31 @@ const loginUser = async (req, res, next) => {
       email: user.email,
     });
 
+    res.cookie(getAuthCookieName(), token, getAuthCookieOptions());
+
     return sendSuccess(
       res,
       {
-        token,
         user: {
           id: user.id,
           name: user.name,
           email: user.email,
         },
       },
-      StatusCodes.OK,
       'Login successful',
+      StatusCodes.OK,
     );
   } catch (error) {
     next(error);
   }
+};
+
+const logoutUser = (req, res) => {
+  res.clearCookie(getAuthCookieName(), getClearAuthCookieOptions());
+
+  return res.status(StatusCodes.OK).json({
+    message: 'Logout successful',
+  });
 };
 
 const getCurrentUser = async (req, res, next) => {
@@ -135,4 +151,4 @@ const getCurrentUser = async (req, res, next) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getCurrentUser };
+module.exports = { registerUser, loginUser, logoutUser, getCurrentUser };

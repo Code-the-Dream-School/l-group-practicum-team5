@@ -3,13 +3,13 @@ const { BadRequestError } = require('../errors');
 const validStatuses = ['planned', 'completed', 'cancelled'];
 
 const validateCreateEvent = (req, res, next) => {
-  const { group_id, title, event_date, status, created_by } = req.body;
+  const { group_id, title, event_date, status } = req.body;
 
   // Required fields
-  if (!group_id || !title || !event_date || !status || !created_by) {
+  if (!group_id || !title || !event_date || !status) {
     return next(
       new BadRequestError(
-        'group_id, title, event_date, status, and created_by are required',
+        'group_id, title, event_date, and status are required',
       ),
     );
   }
