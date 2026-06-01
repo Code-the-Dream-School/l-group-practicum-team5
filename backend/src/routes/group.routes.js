@@ -9,10 +9,24 @@ const {
   deleteGroup,
 } = require('../controllers/group.controller');
 
-router.post('/groups', createGroup);
-router.get('/groups', getAllGroups);
-router.get('/groups/:id', getGroupById);
-router.put('/groups/:id', updateGroup);
-router.delete('/groups/:id', deleteGroup);
+const {
+  validateCreateGroup,
+  validateUpdateGroup,
+} = require('../validations/group.validation');
+
+const {
+  authorizeGroupMember,
+} = require('../middleware/groupAuthorization.middleware');
+
+router.post('/', validateCreateGroup, createGroup);
+router.get('/', getAllGroups);
+router.get('/:id', authorizeGroupMember('id'), getGroupById);
+router.put(
+  '/:id',
+  authorizeGroupMember('id'),
+  validateUpdateGroup,
+  updateGroup,
+);
+router.delete('/:id', authorizeGroupMember('id'), deleteGroup);
 
 module.exports = router;

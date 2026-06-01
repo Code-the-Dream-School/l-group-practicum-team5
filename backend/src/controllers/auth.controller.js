@@ -1,12 +1,21 @@
 const crypto = require('crypto');
 const util = require('util');
 const jwt = require('jsonwebtoken');
+const { StatusCodes } = require('http-status-codes');
 const pool = require('../config/db.postgres');
 const {
-  BadRequestError,
+  getJwtSecret,
+  getJwtLifetime,
+  getAuthCookieName,
+  getAuthCookieOptions,
+  getClearAuthCookieOptions,
+} = require('../config/auth.config');
+const {
   UnauthorizedError,
   ConflictError,
+  NotFoundError,
 } = require('../errors');
+const { sendSuccess } = require('../utils/response');
 
 const scrypt = util.promisify(crypto.scrypt);
 
@@ -26,18 +35,14 @@ async function comparePassword(inputPassword, storedHash) {
 }
 
 function generateToken(payload) {
-  return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_LIFETIME,
+  return jwt.sign(payload, getJwtSecret(), {
+    expiresIn: getJwtLifetime(),
   });
 }
 
 const registerUser = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      throw new BadRequestError('Name, email, and password are required');
-    }
 
     const existingUser = await pool.query(
       `
@@ -59,12 +64,13 @@ const registerUser = async (req, res, next) => {
       [name, email, hashedPassword],
     );
 
-    return res.status(201).json({
-      message: 'User registered successfully',
-      user: newUser.rows[0],
-    });
+    return sendSuccess(
+      res,
+      { user: newUser.rows[0] },
+      StatusCodes.CREATED,
+      'User registered successfully',
+    );
   } catch (error) {
-    console.error('Register error:', error);
     next(error);
   }
 };
@@ -72,10 +78,6 @@ const registerUser = async (req, res, next) => {
 const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      throw new BadRequestError('Email and password are required');
-    }
 
     const result = await pool.query(
       'SELECT id, name, email, password_hash FROM users WHERE email = $1',
@@ -99,19 +101,54 @@ const loginUser = async (req, res, next) => {
       email: user.email,
     });
 
-    return res.status(200).json({
-      message: 'Login successful',
-      token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
+    res.cookie(getAuthCookieName(), token, getAuthCookieOptions());
+
+    return sendSuccess(
+      res,
+      {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
       },
-    });
+      StatusCodes.OK,
+      'Login successful',
+    );
   } catch (error) {
-    console.error('Login error:', error);
     next(error);
   }
 };
 
-module.exports = { registerUser, loginUser };
+const logoutUser = (req, res) => {
+  res.clearCookie(getAuthCookieName(), getClearAuthCookieOptions());
+
+  return res.status(StatusCodes.OK).json({
+    message: 'Logout successful',
+  });
+};
+
+const getCurrentUser = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      throw new UnauthorizedError('Authentication required');
+    }
+
+    const result = await pool.query(
+      'SELECT id, name, email FROM users WHERE id = $1',
+      [userId],
+    );
+
+    if (result.rows.length === 0) {
+      throw new NotFoundError('User not found');
+    }
+
+    return sendSuccess(res, { user: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { registerUser, loginUser, logoutUser, getCurrentUser };
