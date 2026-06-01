@@ -132,7 +132,7 @@ const authorizeEventGroupMember = async (req, res, next) => {
 
 const authorizeIdeaGroupMember = async (req, res, next) => {
   try {
-    const ideaId = parseId(req.params.id);
+    const ideaId = parseId(req.params.ideaId);
     const userId = parseId(req.user?.id);
 
     if (!ideaId) {
