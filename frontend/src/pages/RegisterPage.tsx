@@ -7,17 +7,16 @@ import { useNavigate } from 'react-router-dom';
 function RegisterPage() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const apiURL = import.meta.env.VITE_API_URL;
+
   const onRegister = async (data: {
     name: string;
     email: string;
     password: string;
   }) => {
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch(apiURL + '/auth/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           name: data.name,
           email: data.email,
