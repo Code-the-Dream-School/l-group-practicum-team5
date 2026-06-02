@@ -7,6 +7,7 @@ const {
   removeGroupMember,
 } = require('../controllers/member.controller');
 
+const { createIdea, getGroupIdeas } = require('../controllers/idea.controller');
 const authenticateUser = require('../middleware/auth.middleware');
 
 const {
@@ -41,6 +42,19 @@ router.delete(
   validateUserIdParam,
   authorizeGroupMember('groupId'),
   removeGroupMember,
+);
+
+router.post(
+  '/:groupId/ideas',
+  authenticateUser,
+  authorizeGroupMember('groupId'),
+  createIdea,
+);
+router.get(
+  '/:groupId/ideas',
+  authenticateUser,
+  authorizeGroupMember('groupId'),
+  getGroupIdeas,
 );
 
 module.exports = router;

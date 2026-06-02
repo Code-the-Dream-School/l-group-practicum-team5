@@ -130,8 +130,45 @@ const authorizeEventGroupMember = async (req, res, next) => {
   }
 };
 
+const authorizeIdeaGroupMember = async (req, res, next) => {
+  try {
+    const ideaId = parseId(req.params.ideaId);
+    const userId = parseId(req.user?.id);
+
+    if (!ideaId) {
+      throw new BadRequestError('Invalid idea ID');
+    }
+
+    if (!userId) {
+      throw new BadRequestError('Invalid user ID');
+    }
+
+    const ideaResult = await db.query(
+      `
+        SELECT id, group_id
+        FROM ideas
+        WHERE id = $1;
+      `,
+      [ideaId],
+    );
+
+    if (ideaResult.rows.length === 0) {
+      throw new NotFoundError('Idea not found');
+    }
+
+    const groupId = ideaResult.rows[0].group_id;
+
+    await verifyGroupMembership(groupId, userId);
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   authorizeGroupMember,
   authorizeGroupMemberFromBody,
   authorizeEventGroupMember,
+  authorizeIdeaGroupMember,
 };

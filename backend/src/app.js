@@ -8,6 +8,7 @@ const helloRoutes = require('./routes/hello.routes');
 const authRoutes = require('./routes/auth.routes');
 const eventRoutes = require('./routes/event.routes');
 const groupRoutes = require('./routes/group.routes');
+const ideaRoutes = require('./routes/idea.routes');
 const memberRoutes = require('./routes/member.routes');
 
 const errorHandlerMiddleware = require('./middleware/errorHandler');
@@ -51,6 +52,7 @@ app.use('/api/hello', helloRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/events', authenticateUser, eventRoutes);
 app.use('/api/groups', authenticateUser, groupRoutes);
+app.use('/api/ideas', authenticateUser, ideaRoutes);
 app.use('/api/groups', memberRoutes);
 
 // Root route
