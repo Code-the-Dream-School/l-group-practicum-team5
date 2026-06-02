@@ -10,14 +10,15 @@ const LoginForm = function ({ onLogin }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
-  const handleLogin = async () => {
+  const handleLogin = () => {
     onLogin({ email, password });
     setPassword('');
     setEmail('');
   };
 
+
   const containerStyling =
-    'container m-auto mt-5 w-4/10 text-center bg-white pt-2 pb-2 pr-5 pl-5 rounded-4xl';
+    'container m-auto mt-5 w-2/5 text-center bg-white pt-2 pb-2 pr-5 pl-5 rounded-4xl';
   const buttonStyling =
     'bg-[#5200c5] hover:bg-[#8340e0] text-white p-2 m-8 rounded-xl';
 
@@ -50,10 +51,10 @@ const LoginForm = function ({ onLogin }: LoginFormProps) {
             type="password"
           />
         </div>
-        <Link className={buttonStyling} to="/">
+        <Link  className={buttonStyling} to="/" >
           Register
         </Link>
-        <button className={buttonStyling} type="submit">
+        <button disabled={!email || !password} className={buttonStyling} type="submit">
           Login
         </button>
       </form>
