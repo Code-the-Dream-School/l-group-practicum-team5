@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link } from "react-router";
 
 interface RegisterFormProps {
-  onRegister: (data: { name: string; email: string; password: string }) => void;
+  onRegister: ( name: string, email: string, password: string ) => void;
 }
 
 const RegisterForm = function ({ onRegister }: RegisterFormProps) {
@@ -15,7 +15,7 @@ const RegisterForm = function ({ onRegister }: RegisterFormProps) {
 
   const handleRegister = () => {
     if (password === confirmPassword) {
-      onRegister({ name, email, password });
+      onRegister(name, email, password);
     } else {
       setError('Passwords do not match.');
     }
