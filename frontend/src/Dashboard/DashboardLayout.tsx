@@ -2,13 +2,27 @@ import './dashboardlayout.css';
 import DashboardHeader from './DashboardHeader';
 import StatsGrid from './StatsGrid';
 import LastHangoutBanner from './LastHangoutBanner';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 export default function DashboardLayout() {
+  const navigate = useNavigate();
+  const [group, setGroup] = useState({});
+  const [error, setError] = useState('');
+
+  let errorStyling = '';
+  if (error !== '') {
+    errorStyling =
+      'm-auto mt-5 w-1/5 p-1 bg-[#ff2651] text-white border-3 rounded-xl text-center';
+  }
+
   return (
     <div className="dashboard-container">
       <DashboardHeader />
 
       <main className="dashboard-main">
+        <p className={errorStyling}>{error}</p>
         <StatsGrid />
 
         <LastHangoutBanner />
