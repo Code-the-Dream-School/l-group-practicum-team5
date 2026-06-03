@@ -3,15 +3,15 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 interface LoginFormProps {
-  onLogin: (email: string, password: string ) => void;
+  onLogin: (email: string, password: string ) => Promise<void>;
 }
 
 const LoginForm = function ({ onLogin }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
-  const handleLogin = () => {
-    onLogin( email, password );
+  const handleLogin = async () => {
+    await onLogin( email, password );
     setPassword('');
     setEmail('');
   };

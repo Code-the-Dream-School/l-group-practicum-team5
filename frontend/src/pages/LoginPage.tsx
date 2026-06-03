@@ -4,9 +4,10 @@ import '../Dashboard/dashboardlayout.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../services/authService';
+import type { AuthUserResponse } from '../services/authService';
 
 function LoginPage() {
-  const [error, setError] = useState('');
+  const [error, setError] = useState<AuthUserResponse["message"]>('');
   const navigate = useNavigate();
   const onLogin = async (email: string, password: string) => {
     try {
@@ -15,11 +16,11 @@ function LoginPage() {
       if (response.data?.user) {
         navigate('/dashboard');
       } else {
-        setError("'Invalid email or password'");
+        setError(response.message);
       }
     } catch (err) {
       if (err) {
-        setError('Error');
+        setError('Invalid email or password');
       }
     }
   };
