@@ -19,6 +19,8 @@ const {
   validateUserIdParam,
 } = require('../validations/member.validation');
 
+const { validateCreateIdea } = require('../validations/idea.validation');
+
 router.get(
   '/:groupId/members',
   authenticateUser,
@@ -47,12 +49,16 @@ router.delete(
 router.post(
   '/:groupId/ideas',
   authenticateUser,
+  validateGroupIdParam,
+  validateCreateIdea,
   authorizeGroupMember('groupId'),
   createIdea,
 );
+
 router.get(
   '/:groupId/ideas',
   authenticateUser,
+  validateGroupIdParam,
   authorizeGroupMember('groupId'),
   getGroupIdeas,
 );

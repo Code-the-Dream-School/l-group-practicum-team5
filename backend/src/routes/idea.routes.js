@@ -11,8 +11,31 @@ const {
   authorizeIdeaGroupMember,
 } = require('../middleware/groupAuthorization.middleware');
 
-router.get('/:ideaId', authorizeIdeaGroupMember, getIdeaById);
-router.put('/:ideaId', authorizeIdeaGroupMember, updateIdea);
-router.delete('/:ideaId', authorizeIdeaGroupMember, deleteIdea);
+const {
+  validateIdeaIdParam,
+  validateUpdateIdea,
+} = require('../validations/idea.validation');
+
+router.get(
+  '/:ideaId',
+  validateIdeaIdParam,
+  authorizeIdeaGroupMember,
+  getIdeaById,
+);
+
+router.put(
+  '/:ideaId',
+  validateIdeaIdParam,
+  authorizeIdeaGroupMember,
+  validateUpdateIdea,
+  updateIdea,
+);
+
+router.delete(
+  '/:ideaId',
+  validateIdeaIdParam,
+  authorizeIdeaGroupMember,
+  deleteIdea,
+);
 
 module.exports = router;
