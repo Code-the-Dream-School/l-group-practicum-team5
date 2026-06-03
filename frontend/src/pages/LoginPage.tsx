@@ -3,29 +3,23 @@ import LoginHeader from '../components/shared/HeaderWithoutInvite.tsx';
 import '../Dashboard/dashboardlayout.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../services/authService';
 
 function LoginPage() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const onLogin = async (data: { email: string; password: string }) => {
+  const onLogin = async (email: string, password: string) => {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: data.email, password: data.password }),
-      });
+      const response = await loginUser({ email, password });
 
-      const result = await response.json();
-      if (result.success == true) {
+      if (response.success == true) {
         navigate('/dashboard');
       } else {
-        setError(result.message);
+        setError("Error: Login Failed");
       }
     } catch (err) {
       if (err) {
-        setError('Error: Login Failed');
+        setError('Error');
       }
     }
   };

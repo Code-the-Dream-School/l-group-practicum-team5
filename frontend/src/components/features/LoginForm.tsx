@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 interface LoginFormProps {
-  onLogin: (data: { email: string; password: string }) => void;
+  onLogin: (email: string, password: string ) => void;
 }
 
 const LoginForm = function ({ onLogin }: LoginFormProps) {
@@ -11,7 +11,7 @@ const LoginForm = function ({ onLogin }: LoginFormProps) {
   const [password, setPassword] = useState('');
   
   const handleLogin = () => {
-    onLogin({ email, password });
+    onLogin( email, password );
     setPassword('');
     setEmail('');
   };
