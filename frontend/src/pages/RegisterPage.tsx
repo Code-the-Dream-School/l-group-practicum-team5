@@ -3,37 +3,26 @@ import HeaderWithoutInvite from '../components/shared/HeaderWithoutInvite.tsx';
 import '../Dashboard/dashboardlayout.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { registerUser } from '../services/authService';
 
 function RegisterPage() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const onRegister = async (data: {
-    name: string;
-    email: string;
-    password: string;
-  }) => {
-    try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          password: data.password,
-        }),
-      });
 
-      const result = await response.json();
-      if (result.success == true) {
-        navigate('/login');
+  const onRegister = async (name: string, email: string, password: string) => {
+    try {
+      
+      const response = await registerUser({ name, email, password });
+
+      if (response.success == true) {
+       navigate('/login');
+        
       } else {
-        setError(result.message);
+        setError("Error: Register Failed");
       }
     } catch (err) {
       if (err) {
-        setError('Error: Register Failed');
+        setError('Error');
       }
     }
   };
