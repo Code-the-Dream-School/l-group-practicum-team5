@@ -11,11 +11,11 @@ function LoginPage() {
   const onLogin = async (email: string, password: string) => {
     try {
       const response = await loginUser({ email, password });
-
-      if (response.success == true) {
+      setError('');
+      if (response.data?.user) {
         navigate('/dashboard');
       } else {
-        setError("Error: Login Failed");
+        setError("'Invalid email or password'");
       }
     } catch (err) {
       if (err) {
