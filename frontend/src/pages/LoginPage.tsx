@@ -3,29 +3,24 @@ import LoginHeader from '../components/shared/HeaderWithoutInvite.tsx';
 import '../Dashboard/dashboardlayout.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../services/authService';
+import type { AuthUserResponse } from '../services/authService';
 
 function LoginPage() {
-  const [error, setError] = useState('');
+  const [error, setError] = useState<AuthUserResponse["message"]>('');
   const navigate = useNavigate();
-  const onLogin = async (data: { email: string; password: string }) => {
+  const onLogin = async (email: string, password: string) => {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: data.email, password: data.password }),
-      });
-
-      const result = await response.json();
-      if (result.success == true) {
+      const response = await loginUser({ email, password });
+      setError('');
+      if (response.data?.user) {
         navigate('/dashboard');
       } else {
-        setError(result.message);
+        setError(response.message);
       }
     } catch (err) {
       if (err) {
-        setError('Error: Login Failed');
+        setError('Invalid email or password');
       }
     }
   };
