@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
   createGroup,
+  joinGroupByInviteCode,
   getAllGroups,
   getGroupById,
   updateGroup,
@@ -12,6 +13,7 @@ const {
 const {
   validateCreateGroup,
   validateUpdateGroup,
+  validateJoinGroup,
 } = require('../validations/group.validation');
 
 const {
@@ -19,6 +21,7 @@ const {
 } = require('../middleware/groupAuthorization.middleware');
 
 router.post('/', validateCreateGroup, createGroup);
+router.post('/join', validateJoinGroup, joinGroupByInviteCode);
 router.get('/', getAllGroups);
 router.get('/:id', authorizeGroupMember('id'), getGroupById);
 router.put(
