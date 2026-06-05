@@ -1,6 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const db = require('../config/db.postgres');
-const { BadRequestError, NotFoundError } = require('../errors');
+const { BadRequestError, NotFoundError, ConflictError } = require('../errors');
 const { sendSuccess } = require('../utils/response');
 
 // Helpers
@@ -77,6 +77,85 @@ const createGroup = async (req, res, next) => {
       await client.query('ROLLBACK');
     }
     /*return sendError(res, 'Error creating group', error);*/
+    next(error);
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+};
+
+/**
+ * JOIN GROUP BY INVITE CODE
+ */
+const joinGroupByInviteCode = async (req, res, next) => {
+  let client;
+
+  try {
+    const { invite_code } = req.body;
+    const userId = req.user?.id;
+
+    if (!invite_code || userId == null) {
+      throw new BadRequestError(
+        'invite_code and authenticated user are required',
+      );
+    }
+
+    const inviteCode = invite_code.trim().toUpperCase();
+
+    client = await db.connect();
+
+    await client.query('BEGIN');
+
+    const groupResult = await client.query(
+      `
+        SELECT *
+        FROM groups
+        WHERE invite_code = $1;
+      `,
+      [inviteCode],
+    );
+
+    if (groupResult.rows.length === 0) {
+      throw new NotFoundError('Group not found');
+    }
+
+    const group = groupResult.rows[0];
+
+    const memberResult = await client.query(
+      `
+        SELECT id
+        FROM group_members
+        WHERE group_id = $1 AND user_id = $2;
+      `,
+      [group.id, userId],
+    );
+
+    if (memberResult.rows.length > 0) {
+      throw new ConflictError('User is already a member of this group');
+    }
+
+    await client.query(
+      `
+        INSERT INTO group_members (group_id, user_id)
+        VALUES ($1, $2);
+      `,
+      [group.id, userId],
+    );
+
+    await client.query('COMMIT');
+
+    return sendSuccess(
+      res,
+      group,
+      StatusCodes.CREATED,
+      'Successfully joined group',
+    );
+  } catch (error) {
+    if (client) {
+      await client.query('ROLLBACK');
+    }
+
     next(error);
   } finally {
     if (client) {
@@ -200,6 +279,7 @@ const deleteGroup = async (req, res, next) => {
 
 module.exports = {
   createGroup,
+  joinGroupByInviteCode,
   getAllGroups,
   getGroupById,
   updateGroup,
