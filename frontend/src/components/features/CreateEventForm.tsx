@@ -1,4 +1,4 @@
-import TextInputWithLabel from '../shared/TextInputWithLabel.tsx'; //from login pr
+import TextInputWithLabel from '../shared/TextInputWithLabel.tsx';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
@@ -17,7 +17,6 @@ const CreateEventForm = function ({ onCreateEvent }: CreateEventFormProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [event_date, setEvent_date] = useState('');
-  //const [status, setStatus] = useState<'planned' | 'completed' | 'cancelled'>('planned');
 
   const handleCreateEvent = () => {
     onCreateEvent(group_id, title, description, event_date, 'planned');
