@@ -9,11 +9,9 @@ const createEvent = async (req, res, next) => {
     const { group_id, title, description, event_date, status } = req.body;
     const createdBy = req.user?.id;
 
-    // Basic validation
-    if (!group_id || !title || !event_date || !status || createdBy == null) {
-      throw new BadRequestError(
-        'group_id, title, event_date, status, and authenticated user are required',
-      );
+    // Authenticated user validation
+    if (createdBy == null) {
+      throw new BadRequestError('authenticated user is required');
     }
 
     const query = `

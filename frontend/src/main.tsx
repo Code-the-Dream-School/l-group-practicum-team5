@@ -7,6 +7,7 @@ import DashboardLayout from './Dashboard/DashboardLayout.tsx';
 import ActivityIdeas from './pages/ActivityIdeas.tsx';
 import NewIdea from './pages/NewIdea.tsx';
 import CreateGroupPage from './pages/CreateGroupPage.tsx';
+import CreateEvent from './pages/CreateEvent.tsx';
 import NotFoundPage from './pages/NotFoundPage.tsx';
 import './index.css';
 
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
   { path: '/activity-ideas', element: <ActivityIdeas /> },
   { path: '/new-idea', element: <NewIdea /> },
   { path: '/create-group', element: <CreateGroupPage /> },
+  { path: '/create-event', element: <CreateEvent /> },
   { path: '*', element: <NotFoundPage /> },
 ]);
 
