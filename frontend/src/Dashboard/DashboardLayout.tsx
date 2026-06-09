@@ -1,7 +1,7 @@
 import './dashboardlayout.css';
 import DashboardHeader from './DashboardHeader';
 import StatsGrid from './StatsGrid';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import AllEvents from '../components/features/AllEvents.tsx';
 
 export default function DashboardLayout() {
@@ -33,6 +33,7 @@ export default function DashboardLayout() {
 
           <div className="right-column">
             <div className="card-members">
+              
               <h2 className="card-title">Group Members</h2>
               <hr className="pb-3  text-white" />
               <div className="card-content">
