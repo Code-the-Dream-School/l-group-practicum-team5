@@ -21,7 +21,8 @@ const LoginForm = function ({ onLogin }: LoginFormProps) {
     'container m-auto mt-5 w-2/5 text-center bg-white pt-2 pb-2 pr-5 pl-5 rounded-4xl';
   const buttonStyling =
     'bg-[#5200c5] hover:bg-[#8340e0] text-white p-2 m-8 rounded-xl';
-
+  const submitbuttonStyling =
+    'bg-[#06ff76] hover:bg-[#8cffc0] text-black p-2 m-8 rounded-xl';
   return (
     <div className={containerStyling}>
       <h1 className="text-xl pt-3 pb-2">Login</h1>
@@ -54,7 +55,7 @@ const LoginForm = function ({ onLogin }: LoginFormProps) {
         <Link  className={buttonStyling} to="/" >
           Register
         </Link>
-        <button disabled={!email || !password} className={buttonStyling} type="submit">
+        <button disabled={!email || !password} className={submitbuttonStyling} type="submit">
           Login
         </button>
       </form>

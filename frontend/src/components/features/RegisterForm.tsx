@@ -1,9 +1,9 @@
 import TextInputWithLabel from '../shared/TextInputWithLabel.tsx'; //from login pr
 import { useState } from 'react';
-import { Link } from "react-router";
+import { Link } from 'react-router';
 
 interface RegisterFormProps {
-  onRegister: ( name: string, email: string, password: string ) => void;
+  onRegister: (name: string, email: string, password: string) => void;
 }
 
 const RegisterForm = function ({ onRegister }: RegisterFormProps) {
@@ -25,6 +25,8 @@ const RegisterForm = function ({ onRegister }: RegisterFormProps) {
     'container m-auto mt-5 max-w-4/10 text-center bg-white pt-2 pb-2 pr-5 pl-5 rounded-4xl';
   const buttonStyling =
     'bg-[#5200c5] hover:bg-[#8340e0] text-white p-2 m-5 rounded-xl';
+  const submitbuttonStyling =
+    'bg-[#06ff76] hover:bg-[#8cffc0] text-black p-2 m-8 rounded-xl';
 
   return (
     <div className={containerStyling}>
@@ -71,10 +73,10 @@ const RegisterForm = function ({ onRegister }: RegisterFormProps) {
           type="password"
         />
         <Link className={buttonStyling} to="/login">
-          Login Page
+          Login
         </Link>
-        <button className={buttonStyling} type="submit">
-          Submit
+        <button className={submitbuttonStyling} type="submit">
+          Register
         </button>
       </form>
       <p id="error">{error}</p>
