@@ -1,20 +1,24 @@
-# Gatherly API Routes (MVP)
+# Gatherly API Routes
 
-This document describes the current backend API route structure for the Gatherly App MVP.
+This document describes the current backend API route structure for the Gatherly app.
 
-## 📌 Base URL
+## Base URL
 
 ```txt
 /api
 ```
 
----
+## Health Check Route
 
-## 🔐 Authentication Routes
+| Method | Endpoint   | Description                           |
+| ------ | ---------- | ------------------------------------- |
+| GET    | /api/hello | Check that the backend API is running |
+
+## Authentication Routes
 
 ### Public Authentication Routes
 
-These routes are public and do not require authentication.
+These routes do not require authentication.
 
 | Method | Endpoint           | Description                                   |
 | ------ | ------------------ | --------------------------------------------- |
@@ -30,12 +34,11 @@ These routes require authentication.
 | ------ | ------------ | ------------------------------------ |
 | GET    | /api/auth/me | Get the currently authenticated user |
 
-#### GET /api/auth/me
+### Authentication Notes
 
-Returns the authenticated user's safe profile information.
-
-This route accepts a valid authentication cookie from `POST /api/auth/login`, with Bearer token fallback for API testing and older clients.
-Frontend requests must include credentials so the browser sends the cookie:
+* Auth uses an HttpOnly cookie flow.
+* Bearer token fallback is available for API testing and older clients.
+* Frontend requests should use credentialed requests so the browser sends the cookie automatically.
 
 ```txt
 fetch(url, { credentials: 'include' })
@@ -58,23 +61,26 @@ Expected response example:
 }
 ```
 
----
-
-## 👥 Group Routes
+## Group Routes
 
 These routes require authentication.
 
-| Method | Endpoint             | Description                       |
-| ------ | -------------------- | --------------------------------- |
-| POST   | /api/groups          | Create a new group                |
-| POST   | /api/groups/join     | Join a group using an invite code |
-| GET    | /api/groups/:groupId | Get group details                 |
+| Method | Endpoint         | Description                       |
+| ------ | ---------------- | --------------------------------- |
+| POST   | /api/groups      | Create a new group                |
+| POST   | /api/groups/join | Join a group using an invite code |
+| GET    | /api/groups      | Get all groups                    |
+| GET    | /api/groups/:id  | Get group details                 |
+| PUT    | /api/groups/:id  | Update group details              |
+| DELETE | /api/groups/:id  | Delete a group                    |
 
-Group-specific routes also require the authenticated user to be a member of the requested group where group membership authorization is applied.
+### Group Route Notes
 
----
+* Group routes are mounted under `/api/groups`.
+* Group-specific routes require the authenticated user to be a member of the requested group where group membership authorization is applied.
+* Creating a group also adds the authenticated user as a group member.
 
-## 👤 Member Routes
+## Member Routes
 
 These routes require authentication and group membership authorization.
 
@@ -86,77 +92,109 @@ These routes require authentication and group membership authorization.
 
 ### Member Route Notes
 
-- `GET /api/groups/:groupId/members` returns group members with safe user details.
-- `DELETE /api/groups/:groupId/members/me` allows the authenticated user to leave a group.
-- Group creators cannot leave their own group using the leave route.
-- `DELETE /api/groups/:groupId/members/:userId` allows a group creator to remove another member.
-- Group creators cannot remove themselves using the remove member route.
+* `GET /api/groups/:groupId/members` returns group members with safe user details.
+* `DELETE /api/groups/:groupId/members/me` allows the authenticated user to leave a group.
+* `DELETE /api/groups/:groupId/members/:userId` allows a member removal flow.
+* Group membership authorization is applied before returning or modifying group member data.
 
----
-
-## 📅 Event Routes
+## Event Routes
 
 These routes require authentication.
 
-| Method | Endpoint                    | Description                |
-| ------ | --------------------------- | -------------------------- |
-| GET    | /api/groups/:groupId/events | Get all events for a group |
-| POST   | /api/groups/:groupId/events | Create a new event         |
+| Method | Endpoint        | Description        |
+| ------ | --------------- | ------------------ |
+| POST   | /api/events     | Create a new event |
+| GET    | /api/events     | Get all events     |
+| GET    | /api/events/:id | Get event details  |
+| PUT    | /api/events/:id | Update an event    |
+| DELETE | /api/events/:id | Delete an event    |
 
-Group event routes require the authenticated user to be a member of the requested group where group membership authorization is applied.
+### Event Route Notes
 
----
+* Event routes are mounted under `/api/events`.
+* Event creation uses `group_id` in the request body to associate an event with a group.
+* Event status must be one of: `planned`, `completed`, or `cancelled`.
+* Group membership authorization is applied where event access depends on the event’s group.
 
-## 💡 Idea Routes
+## Idea Routes
 
-These routes are planned for the MVP, but idea route implementation is still in progress.
+Idea routes are split between group-based idea routes and individual idea routes.
 
-| Method | Endpoint                   | Description               |
-| ------ | -------------------------- | ------------------------- |
-| GET    | /api/groups/:groupId/ideas | Get all ideas for a group |
-| POST   | /api/groups/:groupId/ideas | Create a new idea         |
+### Group Idea Routes
 
----
+These routes require authentication and group membership authorization.
 
-## 🔒 Authentication Notes
+| Method | Endpoint                   | Description                |
+| ------ | -------------------------- | -------------------------- |
+| POST   | /api/groups/:groupId/ideas | Create an idea for a group |
+| GET    | /api/groups/:groupId/ideas | Get all ideas for a group  |
 
-- Public routes:
-  - `POST /api/auth/register`
-  - `POST /api/auth/login`
-- Protected routes require a valid authentication cookie set by `POST /api/auth/login`, with Bearer token fallback for API testing and older clients.
-- Frontend requests should use credentialed requests so the browser sends the cookie automatically.
-- API testing tools can also send cookies from a cookie jar.
+### Individual Idea Routes
 
-```txt
-Cookie: gatherly_auth=<jwt>
+These routes require authentication and idea group membership authorization.
+
+| Method | Endpoint           | Description      |
+| ------ | ------------------ | ---------------- |
+| GET    | /api/ideas/:ideaId | Get idea details |
+| PUT    | /api/ideas/:ideaId | Update an idea   |
+| DELETE | /api/ideas/:ideaId | Delete an idea   |
+
+## API Response Format
+
+Success response example:
+
+```json
+{
+  "success": true,
+  "data": {}
+}
 ```
 
-- Protected group-specific routes may also require group membership authorization.
-- API responses should not include password hashes or other sensitive user fields.
+Success response with message example:
 
----
+```json
+{
+  "success": true,
+  "message": "Action completed successfully",
+  "data": {}
+}
+```
 
-## ⚠️ MVP Scope Notes
+Error response example:
 
-- No password reset
-- No email verification
-- No refresh tokens
-- API kept intentionally simple for MVP
-- Some routes are implemented, while others are still planned or in progress
+```json
+{
+  "success": false,
+  "message": "Error message"
+}
+```
 
----
+## Security Notes
 
-## 🧠 Future Improvements
+* Public routes are limited to registration, login, logout, and health check.
+* Protected routes require a valid authentication cookie or Bearer token fallback.
+* Password hashes and sensitive fields should never be returned in API responses.
+* Group-specific data is protected with group membership authorization where applied.
+* Validation middleware is used to reject invalid request data before controller logic runs.
 
-- Add PUT/PATCH routes for updating resources
-- Add DELETE routes where needed
-- Add role-based permissions
-- Add refresh token flow
-- Add validation schemas
-- Expand API examples for testing and frontend integration
+## MVP Scope Notes
 
----
+* No forgot password flow yet.
+* No email verification yet.
+* No refresh token flow yet.
+* Some dashboard/user-specific filtering may still need improvement.
+* API is intentionally kept simple for the MVP.
 
-## 📌 Summary
+## Future Improvements
 
-This document tracks the Gatherly backend API route structure and should be updated as routes are implemented or changed.
+* Forgot password flow
+* Email verification
+* Refresh token flow
+* Expanded automated testing
+* More detailed role/member permissions
+* More user-specific dashboard filtering
+* Additional API examples for frontend integration and testing
+
+## Summary
+
+This document tracks the current Gatherly backend API route structure and should be updated when routes are added, removed, or changed.
