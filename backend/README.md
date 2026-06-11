@@ -1,212 +1,133 @@
-# Backend API Best Practices & Security Guide
+# Gatherly Backend
 
-This document outlines **backend API, security, and architecture best practices** for a Node.js + Express application.
-It is written for students building their first **real-world backend** and should be used as a reference while developing features.
+This folder contains the backend API for Gatherly.
 
-## 🎯 Core Responsibilities of the Backend
+The backend is built with Node.js, Express, PostgreSQL/Neon, JWT authentication, cookie-based auth handling, validation middleware, and centralized error handling.
 
-The backend API is responsible for:
+## Tech Stack
 
-- Defining API routes
-- Validating incoming data
-- Applying business rules
-- Interacting with the database
-- Enforcing security and access control
+* Node.js v24.11.0
+* Express
+* PostgreSQL / Neon
+* JWT / cookie-based authentication
+* Password hashing with Node `crypto.scrypt`
+* dotenv
+* helmet
+* cors
+* morgan
+* express-rate-limit
+* node-pg-migrate
 
-The backend **must not**:
+## Local Setup
 
-- Render UI
-- Trust client input
-- Expose sensitive information
+From the project root:
 
-## 🧱 API Architecture Best Practices
-
-### 1️⃣ Separate Routes from Controllers
-
-**Routes**
-
-- Define the URL and HTTP method
-
-**Controllers**
-
-- Contain the logic for handling requests
-
-This separation keeps code readable and scalable.
-
-### 2️⃣ One Responsibility per File
-
-If a file:
-
-- defines routes
-- validates data
-- accesses the database
-- formats responses
-
-…it is doing too much.
-
-Break logic into smaller, focused files.
-
-### 3️⃣ Use Async/Await in Controllers
-
-Controllers should be predictable and readable:
-
-```js
-const getItems = async (req, res, next) => {
-  try {
-    res.json({ data: [] });
-  } catch (error) {
-    next(error);
-  }
-};
+```bash
+cd backend
+npm install
+npm run dev
 ```
 
-## ❌ Input Validation & Trust Boundaries
+The backend runs locally on:
 
-### 4️⃣ Never Trust Client Input
-
-All data coming from:
-
-- request bodies
-- query params
-- URL params
-
-must be validated.
-
-Even simple checks help prevent bugs and attacks.
-
-### 5️⃣ Validate Early, Fail Fast
-
-Reject invalid requests immediately with a `400` response.
-Do not allow bad data to reach business logic or the database.
-
-## 🧯 Error Handling Best Practices
-
-### 6️⃣ Centralized Error Handling
-
-Use a single error-handling middleware:
-
-```js
-module.exports = (err, req, res, next) => {
-  console.error(err.stack);
-
-  res.status(err.status || 500).json({
-    message: err.message || 'Server error',
-  });
-};
+```text
+http://localhost:8080
 ```
 
-Benefits:
+## Environment Variables
 
-- consistent responses
-- easier debugging
-- cleaner controllers
+Create a `.env` file inside the `backend` folder.
 
----
+Local development example:
 
-### 7️⃣ Never Leak Internal Errors
-
-❌ Bad:
-
-```json
-{ "error": "Cannot read property 'map' of undefined" }
+```env
+PORT=8080
+DATABASE_URL=your_database_url
+JWT_SECRET=your_secret_key
+JWT_LIFETIME=1d
+AUTH_COOKIE_NAME=gatherly_auth
+CORS_ORIGIN=http://localhost:5173
+COOKIE_SECURE=false
+COOKIE_SAMESITE=lax
+NODE_ENV=development
 ```
 
-✅ Good:
+Production deployment example:
 
-```json
-{ "message": "Something went wrong" }
+```env
+DATABASE_URL=your_production_postgres_database_url
+JWT_SECRET=your_long_random_secret
+JWT_LIFETIME=1d
+AUTH_COOKIE_NAME=gatherly_auth
+CORS_ORIGIN=https://your-frontend-service.onrender.com
+COOKIE_SECURE=true
+COOKIE_SAMESITE=none
+NODE_ENV=production
 ```
 
-Log details on the server, not in API responses.
+Do not commit real `.env` values, database URLs, or secret keys.
 
-## 🔐 Security Best Practices
+## Available Scripts
 
-### 8️⃣ Use Security Middleware
-
-Recommended packages:
-
-- `helmet` – secure HTTP headers
-- `cors` – control cross-origin access
-- `express-rate-limit` – prevent abuse
-- `morgan` – request logging
-
-These should be applied **globally**.
-
-### 9️⃣ Principle of Least Privilege
-
-- Only expose necessary routes
-- Never return sensitive fields (passwords, secrets)
-- Protect routes that modify data
-
-### 🔟 Use Environment Variables for Secrets
-
-Examples:
-
-- database URLs
-- JWT secrets
-- API keys
-
-Never commit `.env` files to Git.
-
-## 🌐 API Design Best Practices
-
-### 1️⃣1️⃣ Use Proper HTTP Status Codes
-
-- `200` – success
-- `201` – resource created
-- `400` – bad request
-- `401` – unauthorized
-- `403` – forbidden
-- `404` – not found
-- `500` – server error
-
-### 1️⃣2️⃣ Keep API Response Shapes Consistent
-
-Example success response:
-
-```json
-{
-  "success": true,
-  "data": {}
-}
+```bash
+npm run dev
+npm start
+npm run migrate:up
+npm run migrate:down
+npm run migrate:create -- migration_name
 ```
 
-Example error response:
+## Migration Notes
 
-```json
-{
-  "success": false,
-  "message": "Unauthorized"
-}
+This project uses `node-pg-migrate`.
+
+Node.js `>= 20.11.0` is required for migration tooling.
+
+```bash
+npm run migrate:up
 ```
 
-Consistency makes frontend development easier.
+Applies migrations and creates the database schema.
 
-## 🗄 Database Best Practices (When Added)
+```bash
+npm run migrate:down
+```
 
-- Only the backend talks to the database
-- Keep database logic out of routes
-- Never expose database errors directly to clients
+Rolls back the latest migration.
 
-## 🧠 Recommended Mindset
+Since the team shares one database, only one person should need to run migrations for the shared environment.
 
-> The backend is the **source of truth** for data, rules, and security.
+## API Route Areas
 
-Build APIs assuming:
+Main backend route areas include:
 
-- clients can be buggy
-- clients can be malicious
-- future developers will read your code
+* Auth routes
+* Group routes
+* Member routes
+* Event routes
+* Idea routes
+* Health check route
 
-## 📋 Quick Checklist (Before MVP Review)
+Current route details are documented in the root `README.md`.
 
-- [ ] Routes and controllers are separated
-- [ ] Input is validated
-- [ ] Errors are handled centrally
-- [ ] Security middleware is enabled
-- [ ] Secrets are stored in environment variables
-- [ ] API responses are consistent
+## API Notes
 
-## 📄 License
+* Auth uses an HttpOnly cookie flow.
+* Bearer token fallback is available for API testing and older clients.
+* Protected routes require authentication.
+* Group-specific routes require group membership authorization where applied.
+* API responses use a consistent success/error response structure.
 
-Educational use only.
+## Backend Docs
+
+Additional backend notes are in the `backend/docs` folder:
+
+```text
+backend/docs/api-routes.md
+backend/docs/api-testing-examples.md
+backend/docs/sql-crud-guidelines.md
+```
+
+## License
+
+This project is for educational purposes only.

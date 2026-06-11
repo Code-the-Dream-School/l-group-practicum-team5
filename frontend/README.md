@@ -1,259 +1,88 @@
-# Frontend Best Practices
+# Gatherly Frontend
 
-This document outlines **React-specific best practices** for building maintainable,
-performant frontend applications. It is intended for students working on real-world
-full‑stack projects.
+This folder contains the frontend for Gatherly.
 
-## 🎯 Core Responsibilities of the Frontend
+The frontend is built with React, TypeScript, Vite, Tailwind CSS, and service files that communicate with the backend API.
 
-The frontend is responsible for:
+## Tech Stack
 
-- Rendering UI
-- Handling user interaction
-- Managing client-side state
-- Communicating with backend APIs
-- Displaying loading and error states
+* React
+* TypeScript
+* Vite
+* Tailwind CSS
+* ESLint
+* Render
 
-The frontend **is not** responsible for:
+## Local Setup
 
-- Business rules
-- Data persistence
-- Security logic
-- Database access
+From the project root:
 
-## 🧱 React Architecture Best Practices
-
-### 1️⃣ Keep Components Small and Focused
-
-Each component should ideally:
-
-- do **one thing**
-- be easy to read
-- be reusable
-
-❌ Too much responsibility:
-
-```jsx
-function Dashboard() {
-  // fetch data
-  // handle form logic
-  // render UI
-}
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-✅ Better:
+The frontend runs locally on:
 
 ```text
-Dashboard
-├── DashboardLayout
-├── StatsPanel
-└── ActivityList
+http://localhost:5173
 ```
 
-### 2️⃣ Separate Data Fetching from UI
+## Environment Variables
 
-Avoid putting fetch logic directly in UI-heavy components.
+Create a `.env` file inside the `frontend` folder if needed.
 
-❌ Bad:
+Local development example:
 
-```jsx
-function Hello() {
-  useEffect(() => {
-    fetch('/api/hello').then(...)
-  }, []);
-}
+```env
+VITE_API_URL=http://localhost:8080/api
 ```
 
-✅ Better:
+For production, `VITE_API_URL` should point to the deployed backend API URL.
 
-```js
-// services/helloApi.js
-export const getHello = async () => {
-  const res = await fetch('/api/hello');
-  return res.json();
-};
+Do not commit real secret values. Frontend environment variables are visible in the browser, so only public frontend configuration should be used here.
+
+## Available Scripts
+
+```bash
+npm run dev
+npm run build
+npm run preview
 ```
 
-```jsx
-function Hello() {
-  useEffect(() => {
-    getHello().then(setMessage);
-  }, []);
-}
+## Main Frontend Areas
+
+The frontend includes:
+
+* Authentication pages and forms
+* Dashboard layout
+* Group-related UI
+* Event-related UI
+* Idea-related UI
+* Shared components
+* API service files
+
+## API Connection
+
+Frontend API calls are organized through service files in:
+
+```text
+frontend/src/services/
 ```
 
-## ⚡ Performance Best Practices
+The API client uses `VITE_API_URL` when provided and falls back to the local backend URL for local development.
 
-### 3️⃣ Minimize Unnecessary Re-Renders
+Auth requests use credentialed requests so the browser can send the authentication cookie.
 
-React re-renders when:
+## Design Docs
 
-- state changes
-- props change
-- parent re-renders
+Wireframes and design-related files are stored in:
 
-Avoid unnecessary state.
-
-❌ Bad:
-
-```jsx
-const [count, setCount] = useState(0);
-const doubled = count * 2;
+```text
+frontend/docs/wireframes/
 ```
 
-✅ Better:
+## License
 
-```jsx
-const doubled = count * 2;
-```
-
-Derived values should not be state.
-
-### 4️⃣ Use `useMemo` and `useCallback` When Needed
-
-Only optimize **when necessary**, not everywhere.
-
-```jsx
-const expensiveValue = useMemo(() => {
-  return heavyCalculation(data);
-}, [data]);
-```
-
-```jsx
-const handleClick = useCallback(() => {
-  setCount((c) => c + 1);
-}, []);
-```
-
-These prevent unnecessary recalculations and re-renders.
-
-### 5️⃣ Avoid Inline Functions in Props (When It Matters)
-
-❌ Can cause re-renders:
-
-```jsx
-<Button onClick={() => handleSave()} />
-```
-
-✅ Better:
-
-```jsx
-const onSave = useCallback(handleSave, []);
-<Button onClick={onSave} />;
-```
-
-## 🧯 Prevent Memory Leaks
-
-### 6️⃣ Clean Up Side Effects
-
-Always clean up:
-
-- timers
-- intervals
-- event listeners
-
-```jsx
-useEffect(() => {
-  const id = setInterval(() => {
-    console.log('tick');
-  }, 1000);
-
-  return () => clearInterval(id);
-}, []);
-```
-
-Without cleanup, memory leaks occur.
-
-### 7️⃣ Abort Fetch Requests on Unmount
-
-```jsx
-useEffect(() => {
-  const controller = new AbortController();
-
-  fetch('/api/data', { signal: controller.signal })
-    .then((res) => res.json())
-    .then(setData)
-    .catch(() => {});
-
-  return () => controller.abort();
-}, []);
-```
-
-Prevents state updates on unmounted components.
-
-## 🧠 State Management Best Practices
-
-### 8️⃣ Lift State Only When Necessary
-
-State should live:
-
-- as low as possible
-- as high as necessary
-
-Avoid global state too early.
-
-### 9️⃣ Avoid Overusing `useEffect`
-
-`useEffect` is for **side effects**, not regular logic.
-
-❌ Bad:
-
-```jsx
-useEffect(() => {
-  setTotal(price * qty);
-}, [price, qty]);
-```
-
-✅ Better:
-
-```jsx
-const total = price * qty;
-```
-
-## 🧪 Rendering & Lists
-
-### 🔟 Always Use Stable Keys
-
-❌ Bad:
-
-```jsx
-items.map((item, index) => <Item key={index} />);
-```
-
-✅ Good:
-
-```jsx
-items.map((item) => <Item key={item.id} />);
-```
-
-Stable keys prevent UI bugs and re-renders.
-
-## 🌍 Environment & Configuration
-
-### 1️⃣1️⃣ Use Environment Variables
-
-```js
-const API_URL = import.meta.env.VITE_API_URL;
-```
-
-Never hardcode production URLs.
-
-## 🧠 Recommended Mindset
-
-> React performance comes from **good structure first**, not premature optimization.
-
-Build readable code first.
-Optimize when you see real issues.
-
-## 📋 Quick Checklist (Before MVP Review)
-
-- [ ] Components are small and focused
-- [ ] API logic lives in services
-- [ ] No unnecessary state
-- [ ] Side effects are cleaned up
-- [ ] Lists use stable keys
-- [ ] Environment variables are used correctly
-
-## 📄 License
-
-Educational use only.
+This project is for educational purposes only.
